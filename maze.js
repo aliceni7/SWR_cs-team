@@ -77,7 +77,50 @@ function makeBlankBacktrackMaze(rows = 8, cols = 8){
 }
 makeBlankBacktrackMaze();
 
+/* returns a random integer between 0 and the given maximum (noninclusive) parameter*/
+function getRandomInt(max){
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+function mazeGenBacktracking(rows = 8, cols = 8){
+  var maze = document.getElementsByTagName("tbody")[0];
+  var startCell, endCell;
+  console.log(maze);
+  var mazeOrient = getRandomInt(4);
+  switch(mazeOrient){
+    case 0:
+      var leftBorder = maze.getElementsByClassName("leftborder");
+      startCell = leftBorder[getRandomInt(rows)];
+      var rightBorder = maze.getElementsByClassName("rightborder");
+      endCell = rightBorder[getRandomInt(rows)];
+      break;
+    case 1:
+      var rightBorder = maze.getElementsByClassName("rightborder");
+      startCell = rightBorder[getRandomInt(rows)];
+      var leftBorder = maze.getElementsByClassName("leftborder");
+      endCell = leftBorder[getRandomInt(rows)];
+      break;
+    case 2:
+      var topBorder = maze.getElementsByClassName("topborder");
+      startCell = topBorder[getRandomInt(cols)];
+      var botBorder = maze.getElementsByClassName("botborder");
+      endCell = botBorder[getRandomInt(cols)];
+      break;
+    default:
+      var botBorder = maze.getElementsByClassName("botborder");
+      startCell = botBorder[getRandomInt(cols)];
+      var topBorder = maze.getElementsByClassName("topborder");
+      endCell = topBorder[getRandomInt(cols)];
+      break;
+  }
+  startCell.classList.add("start");
+  endCell.classList.add("end");
+}
+function backtrackHelper(){
+
+}
+mazeGenBacktracking();
 function mazeGenRecursiveDivision(rows = 8, cols = 8){
-  document.getElementBy
+
 }
 window.onload=init;

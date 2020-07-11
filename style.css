@@ -21,3 +21,9 @@ table {
 .rightborder {
   border-right: 5px #000000 solid;
 }
+.start {
+  background-color: green;
+}
+.end {
+  background-color: red;
+}
