@@ -126,8 +126,10 @@ function makeStartEndCells(rows = 8, cols = 8){
   }
   startCell.classList.add("start");
   endCell.classList.add("end");
+  // console.log(maze);
   return maze;
 }
+
 // Given a cell returns an object with the given cell's row and col number
 function getCoords(cell){
   var id = cell.id;
@@ -136,32 +138,154 @@ function getCoords(cell){
   var col = id.slice(cell.id.lastIndexOf("_") + 2, id.length);
   // console.log(col);
   return {
-    "row": row,
-    "col": col
+    "row": parseInt(row),
+    "col": parseInt(col)
   }
 }
+
 /* Pseudocode
     Choose the initial cell, mark it as visited and push it to the stack
       While the stack is not empty
         Pop a cell from the stack and make it a current cell
         If the current cell has any neighbours which have not been visited
           Push the current cell to the stack
-          Choose one of the unvisited neighbours
+          Choose one of the unvisited neighbors
           Remove the wall between the current cell and the chosen cell
           Mark the chosen cell as visited and push it to the stack
 */
 function mazeGenBacktracking(rows = 8, cols = 8){
   var maze = makeBlankBacktrackMaze(rows, cols);
   var start = document.getElementsByClassName("start")[0];
-  console.log(getCoords(start));
   var stack = [];
+  var visited = makeVisitedArray(rows, cols);
+  // console.log(visited);
+  var startCoords = getCoords(start);
   stack.push(start);
-  console.log(stack);
+  visited[startCoords["row"]][startCoords["col"]] = true;
+  backtrackHelper(start, stack, visited, maze);
 }
-function backtrackHelper(cell){
 
+function backtrackHelper(cell, stack, visited, maze){
+  while (stack.length !== 0){
+    var curr = stack.pop();
+    var unvisited = hasUnvisitedNeighbors(curr, visited);
+    // console.log(unvisited);
+    if (unvisited.length !== 0){
+      stack.push(curr);
+      //Choose one of unvisited neighbors
+      var next = unvisited[getRandomInt(unvisited.length)];
+      var nextCoords = getCoords(next);
+      // console.log(next);
+      removeWall(curr, next);
+      visited[nextCoords["row"]][nextCoords["col"]] = true;
+      stack.push(next);
+    }
+  }
 }
+
+// Returns a rows by cols sized array filled with falses
+function makeVisitedArray(rows, cols){
+  var temp = [];
+  for (var r = 0; r < rows; r++){
+    temp.push([]);
+    for(var c = 0; c < cols; c++){
+      temp[r].push(false);
+    }
+  }
+  // console.log(temp);
+  return temp;
+}
+
+// Takes two cells and removes the adjacent wall. Doesn't return anything
+function removeWall(start, end){
+  var startCoords = getCoords(start);
+  var endCoords = getCoords(end);
+  var relativePosition = [endCoords["row"] - startCoords["row"], endCoords["col"] - startCoords["col"]];
+  console.log("relative position: '"+ relativePosition + "'");
+  console.log(typeof relativePosition);
+  switch (relativePosition.join(' ')){
+    // start is on top of end
+    case "1 0":
+      // console.log("1");
+      start.style.borderBottom = "0px";
+      end.style.borderTop = "0px";
+      break;
+    // start is below end
+    case "-1 0":
+      // console.log("2");
+      start.style.borderTop = "0px";
+      end.style.borderBottom = "0px";
+      break;
+    // start is to the left of end
+    case "0 1":
+      // console.log("2");
+      start.style.borderRight = "0px";
+      end.style.borderLeft = "0px";
+      break;
+    // start is to the right of end
+    case "0 -1":
+      // console.log("2");
+      start.style.borderLeft = "0px";
+      end.style.borderRight = "0px";
+      break;
+  }
+}
+// Returns an array of unvisited neighboring cells
+function hasUnvisitedNeighbors(cell, visited){
+  var unvisited = [];
+  var currCoords = getCoords(cell);
+  var tempId;
+  var tempCell;
+  var tempRow = currCoords["row"];
+  var tempCol = currCoords["col"];
+  // Check cell on top
+  /*
+  console.log(typeof currCoords["row"]);
+  console.log(currCoords["row"]);
+  console.log(typeof tempRow);
+  console.log(tempRow);
+  */
+  if (tempRow !== 0){
+    tempId = "cell_r" + (tempRow - 1) + "_c" + tempCol;
+    console.log(tempId);
+    tempCell = document.getElementById(tempId);
+    // console.log(visited[tempRow - 1][tempCol]);
+    if (!visited[tempRow - 1][tempCol]){
+      unvisited.push(tempCell);
+    }
+  }
+  // Check cell below
+  if (tempRow !== visited.length - 1){
+    tempId = "cell_r" + (tempRow + 1) + "_c" + tempCol;
+    console.log(tempId);
+    tempCell = document.getElementById(tempId);
+    if (!visited[tempRow + 1][tempCol]){
+      unvisited.push(tempCell);
+    }
+  }
+  // Check cell to left
+  if (tempCol !== 0){
+    tempId = "cell_r" + tempRow + "_c" + (tempCol - 1);
+    console.log(tempId);
+    tempCell = document.getElementById(tempId);
+    if (!visited[tempRow][tempCol - 1]){
+      unvisited.push(tempCell);
+    }
+  }
+  // Check cell to right
+  if (tempCol !== visited[tempRow].length - 1){
+    tempId = "cell_r" + tempRow + "_c" + (tempCol + 1);
+    console.log(tempId);
+    tempCell = document.getElementById(tempId);
+    if (!visited[tempRow][tempCol + 1]){
+      unvisited.push(tempCell);
+    }
+  }
+  return unvisited;
+}
+
 mazeGenBacktracking();
+
 function mazeGenRecursiveDivision(rows = 8, cols = 8){
 
 }
