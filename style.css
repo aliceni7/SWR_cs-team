@@ -1,5 +1,23 @@
 table td {
 
     border: 1px #000000 solid;
+    width: 100px;
+    height: 100px;
+}
 
+table {
+  border-spacing: 0px;
+}
+
+.topborder {
+  border-top: 5px #000000 solid;
+}
+.leftborder {
+  border-left: 5px #000000 solid;
+}
+.botborder {
+  border-bottom: 5px #000000 solid;
+}
+.rightborder {
+  border-right: 5px #000000 solid;
 }
