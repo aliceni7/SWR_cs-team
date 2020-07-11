@@ -1,12 +1,12 @@
 //init object globally
 var avatar= null;
 function init(){
-    avatar=document.getElementById("dot");				
+    avatar=document.getElementById("dot");
     avatar.style.position='relative';
     avatar.style.left='0px';
     avatar.style.top='0px';
 }
-function getKeyAndMove(e){				
+function getKeyAndMove(e){
     var key_code=e.which||e.keyCode;
     switch(key_code){
     case 37: //left arrow key
@@ -30,7 +30,7 @@ function getKeyAndMove(e){
     case 40: //down arrow key
 	e.preventDefault();
 	moveDown();
-	break;						
+	break;
     }
 }
 function moveLeft(){
@@ -45,5 +45,27 @@ function moveRight(){
 function moveDown(){
     avatar.style.top=parseInt(avatar.style.top)+10 +'px';
 }
-window.onload=init;
 
+function makeBlankMaze(rows = 8, cols = 8){
+    var table = document.createElement("table");
+    var tbody = document.createElement("tbody");
+    var tablerow;
+    var tabledata;
+    for (var r = 0; r <= rows; r++){
+        tablerow = document.createElement("tr");
+        for (var c = 0; c < cols; c++){
+          tabledata = document.createElement("td");
+          tablerow.appendChild(tabledata);
+        }
+        console.log(tablerow);
+        tbody.appendChild(tablerow);
+    }
+    table.appendChild(tbody);
+    document.getElementById("maze_container").appendChild(table);
+}
+makeBlankMaze();
+
+function mazeGenRecursiveDivision(rows = 8, cols = 8){
+
+}
+window.onload=init;
