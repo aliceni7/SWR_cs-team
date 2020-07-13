@@ -168,7 +168,7 @@ function mazeGenBacktracking(rows = 8, cols = 8){
 function backtrackHelper(cell, stack, visited, maze){
   while (stack.length !== 0){
     var curr = stack.pop();
-    var unvisited = hasUnvisitedNeighbors(curr, visited);
+    var unvisited = unvisitedNeighbors(curr, visited);
     // console.log(unvisited);
     if (unvisited.length !== 0){
       stack.push(curr);
@@ -201,8 +201,8 @@ function removeWall(start, end){
   var startCoords = getCoords(start);
   var endCoords = getCoords(end);
   var relativePosition = [endCoords["row"] - startCoords["row"], endCoords["col"] - startCoords["col"]];
-  console.log("relative position: '"+ relativePosition + "'");
-  console.log(typeof relativePosition);
+  // console.log("relative position: '"+ relativePosition + "'");
+  // console.log(typeof relativePosition);
   switch (relativePosition.join(' ')){
     // start is on top of end
     case "1 0":
@@ -231,7 +231,7 @@ function removeWall(start, end){
   }
 }
 // Returns an array of unvisited neighboring cells
-function hasUnvisitedNeighbors(cell, visited){
+function unvisitedNeighbors(cell, visited){
   var unvisited = [];
   var currCoords = getCoords(cell);
   var tempId;
@@ -247,7 +247,7 @@ function hasUnvisitedNeighbors(cell, visited){
   */
   if (tempRow !== 0){
     tempId = "cell_r" + (tempRow - 1) + "_c" + tempCol;
-    console.log(tempId);
+    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     // console.log(visited[tempRow - 1][tempCol]);
     if (!visited[tempRow - 1][tempCol]){
@@ -257,7 +257,7 @@ function hasUnvisitedNeighbors(cell, visited){
   // Check cell below
   if (tempRow !== visited.length - 1){
     tempId = "cell_r" + (tempRow + 1) + "_c" + tempCol;
-    console.log(tempId);
+    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow + 1][tempCol]){
       unvisited.push(tempCell);
@@ -266,7 +266,7 @@ function hasUnvisitedNeighbors(cell, visited){
   // Check cell to left
   if (tempCol !== 0){
     tempId = "cell_r" + tempRow + "_c" + (tempCol - 1);
-    console.log(tempId);
+    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow][tempCol - 1]){
       unvisited.push(tempCell);
@@ -275,7 +275,7 @@ function hasUnvisitedNeighbors(cell, visited){
   // Check cell to right
   if (tempCol !== visited[tempRow].length - 1){
     tempId = "cell_r" + tempRow + "_c" + (tempCol + 1);
-    console.log(tempId);
+    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow][tempCol + 1]){
       unvisited.push(tempCell);
