@@ -1,52 +1,6 @@
-//init object globally
-var avatar= null;
+var avatar = document.getElementById('dot');
 var defaultRows = 8;
 var defaultCols = 8;
-function init(){
-    avatar=document.getElementById("dot");
-    avatar.style.position='relative';
-    avatar.style.left='0px';
-    avatar.style.top='0px';
-}
-function getKeyAndMove(e){
-    var key_code=e.which||e.keyCode;
-    switch(key_code){
-    case 37: //left arrow key
-	e.preventDefault();
-	moveLeft();
-	break;
-    case 38: //Up arrow key
-	e.preventDefault();
-	moveUp();
-	break;
-    case 39: //right arrow key
-	e.preventDefault();
-	console.log(avatar.style['left']);
-	/*if (avatar.style['left'] === '50px') {
-	    moveUp();
-	} else {
-	    moveRight();
-	    }*/
-	moveRight();
-	break;
-    case 40: //down arrow key
-	e.preventDefault();
-	moveDown();
-	break;
-    }
-}
-function moveLeft(){
-    avatar.style.left=parseInt(avatar.style.left)-10 +'px';
-}
-function moveUp(){
-    avatar.style.top=parseInt(avatar.style.top)-10 +'px';
-}
-function moveRight(){
-    avatar.style.left=parseInt(avatar.style.left)+10 +'px';
-}
-function moveDown(){
-    avatar.style.top=parseInt(avatar.style.top)+10 +'px';
-}
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
 function makeBlankBacktrackMaze(rows = defaultRows, cols = defaultCols){
@@ -86,9 +40,9 @@ function getRandomInt(max){
 }
 
 // Determines a start and end cell and returns the maze
+var startCell, endCell;
 function makeStartEndCells(rows = defaultRows, cols = defaultCols){
   var maze = document.getElementsByTagName("tbody")[0];
-  var startCell, endCell;
   // console.log(maze);
   // determine start and end of maze
   var mazeOrient = getRandomInt(4);
@@ -126,11 +80,95 @@ function makeStartEndCells(rows = defaultRows, cols = defaultCols){
       endCell.style.borderTop = "0px";
       break;
   }
-  startCell.classList.add("start");
-  endCell.classList.add("end");
-  // console.log(maze);
-  return maze;
+    startCell.classList.add("start");
+    endCell.classList.add("end");
+    startCell.appendChild(avatar);
+    return maze;
 }
+
+function init() {
+    avatar.style.position='relative';
+    avatar.style.left='20px';
+    avatar.style.top='0px';
+}
+
+function dotheneedful(sibling) {
+  if (sibling != null) {
+      startCell.focus();
+      sibling.focus();
+      startCell = sibling;
+      sibling.appendChild(avatar);
+  }
+}
+
+function getKeyAndMove(e){
+    var key_code = e.which||e.keyCode;
+    switch(key_code){
+    case 37: //left arrow key
+	//console.log(startCell.lastChild);
+	//startCell.removeChild(startCell.lastChild);
+	if (startCell.style.borderLeft === '') break;
+	var sibling = startCell.previousElementSibling;
+	dotheneedful(sibling);
+	e.preventDefault();
+	//moveLeft();
+	break;
+    case 38: //Up arrow key
+	e.preventDefault();
+	var idx = startCell.cellIndex;
+	var nextrow = startCell.parentElement.previousElementSibling;
+	console.log(startCell.style.borderBottom);
+	if (startCell.style.borderTop === '') break;
+	if (nextrow != null) {
+	    var sibling = nextrow.cells[idx];
+	    dotheneedful(sibling);
+	}
+	//moveUp();
+	break;
+    case 39: //right arrow key
+	e.preventDefault();
+	if (startCell.style.borderRight === '') break;
+	var sibling = startCell.nextElementSibling;
+	dotheneedful(sibling);
+	//console.log(e.target);
+	//console.log(avatar.style['left']);
+	/*if (avatar.style['left'] === '50px') {
+	    moveUp();
+	} else {
+	    moveRight();
+	    }*/
+	//moveRight();
+	break;
+    case 40: //down arrow key
+	if (startCell.style.borderBottom === '') break;
+	var idx = startCell.cellIndex;
+	var nextrow = startCell.parentElement.nextElementSibling;
+	if (nextrow != null) {
+	    var sibling = nextrow.cells[idx];
+	    dotheneedful(sibling);
+	}
+	e.preventDefault();
+	//moveDown();
+	break;
+    }
+}
+function moveLeft(){
+    avatar.style.left=parseInt(avatar.style.left)-10 +'px';
+}
+function moveUp(){
+    avatar.style.top=parseInt(avatar.style.top)-10 +'px';
+}
+function moveRight(){
+    console.log(this.screen);
+    if ($("td").hasClass('b')) return;
+    console.log($("td"));
+    avatar.style.left=parseInt(avatar.style.left)+10 +'px';
+}
+function moveDown(){
+    avatar.style.top=parseInt(avatar.style.top)+10 +'px';
+}
+
+window.onload = init;
 
 // Given a cell returns an object with the given cell's row and col number
 function getCoords(cell){
@@ -203,8 +241,6 @@ function removeWall(start, end){
   var startCoords = getCoords(start);
   var endCoords = getCoords(end);
   var relativePosition = [endCoords["row"] - startCoords["row"], endCoords["col"] - startCoords["col"]];
-  // console.log("relative position: '"+ relativePosition + "'");
-  // console.log(typeof relativePosition);
   switch (relativePosition.join(' ')){
     // start is on top of end
     case "1 0":
@@ -249,7 +285,6 @@ function unvisitedNeighbors(cell, visited){
   */
   if (tempRow !== 0){
     tempId = "cell_r" + (tempRow - 1) + "_c" + tempCol;
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     // console.log(visited[tempRow - 1][tempCol]);
     if (!visited[tempRow - 1][tempCol]){
@@ -259,7 +294,6 @@ function unvisitedNeighbors(cell, visited){
   // Check cell below
   if (tempRow !== visited.length - 1){
     tempId = "cell_r" + (tempRow + 1) + "_c" + tempCol;
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow + 1][tempCol]){
       unvisited.push(tempCell);
@@ -268,7 +302,6 @@ function unvisitedNeighbors(cell, visited){
   // Check cell to left
   if (tempCol !== 0){
     tempId = "cell_r" + tempRow + "_c" + (tempCol - 1);
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow][tempCol - 1]){
       unvisited.push(tempCell);
@@ -277,7 +310,6 @@ function unvisitedNeighbors(cell, visited){
   // Check cell to right
   if (tempCol !== visited[tempRow].length - 1){
     tempId = "cell_r" + tempRow + "_c" + (tempCol + 1);
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow][tempCol + 1]){
       unvisited.push(tempCell);
@@ -285,6 +317,8 @@ function unvisitedNeighbors(cell, visited){
   }
   return unvisited;
 }
+
+console.log(maze_container.classList);
 
 mazeGenBacktracking();
 
@@ -371,4 +405,3 @@ console.log(mazeSolver());
 function mazeGenRecursiveDivision(rows = defaultRows, cols = defaultCols){
 
 }
-window.onload=init;
