@@ -1,5 +1,7 @@
 //init object globally
 var avatar= null;
+var defaultRows = 8;
+var defaultCols = 8;
 function init(){
     avatar=document.getElementById("dot");
     avatar.style.position='relative';
@@ -47,7 +49,7 @@ function moveDown(){
 }
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
-function makeBlankBacktrackMaze(rows = 8, cols = 8){
+function makeBlankBacktrackMaze(rows = defaultRows, cols = defaultCols){
     var table = document.createElement("table");
     var tbody = document.createElement("tbody");
     var tablerow;
@@ -84,7 +86,7 @@ function getRandomInt(max){
 }
 
 // Determines a start and end cell and returns the maze
-function makeStartEndCells(rows = 8, cols = 8){
+function makeStartEndCells(rows = defaultRows, cols = defaultCols){
   var maze = document.getElementsByTagName("tbody")[0];
   var startCell, endCell;
   // console.log(maze);
@@ -153,7 +155,7 @@ function getCoords(cell){
           Remove the wall between the current cell and the chosen cell
           Mark the chosen cell as visited and push it to the stack
 */
-function mazeGenBacktracking(rows = 8, cols = 8){
+function mazeGenBacktracking(rows = defaultRows, cols = defaultCols){
   var maze = makeBlankBacktrackMaze(rows, cols);
   var start = document.getElementsByClassName("start")[0];
   var stack = [];
@@ -162,10 +164,10 @@ function mazeGenBacktracking(rows = 8, cols = 8){
   var startCoords = getCoords(start);
   stack.push(start);
   visited[startCoords["row"]][startCoords["col"]] = true;
-  backtrackHelper(start, stack, visited, maze);
+  backtrackGenHelper(stack, visited, maze);
 }
 
-function backtrackHelper(cell, stack, visited, maze){
+function backtrackGenHelper(stack, visited, maze){
   while (stack.length !== 0){
     var curr = stack.pop();
     var unvisited = unvisitedNeighbors(curr, visited);
@@ -286,7 +288,87 @@ function unvisitedNeighbors(cell, visited){
 
 mazeGenBacktracking();
 
-function mazeGenRecursiveDivision(rows = 8, cols = 8){
+//Returns an array containing the cells in sequential order from start to end making up the path through the maze
+function mazeSolver(rows = defaultRows, cols = defaultCols){
+  var maze = document.getElementById("maze_container");
+  var start = document.getElementsByClassName("start")[0];
+  var stack = [];
+  var visited = makeVisitedArray(rows, cols);
+  // console.log(visited);
+  var startCoords = getCoords(start);
+  stack.push(start);
+  visited[startCoords["row"]][startCoords["col"]] = true;
+  return solveHelper(stack, visited, maze);
+}
+
+function solveHelper(stack, visited, maze){
+  while (stack.length !== 0){
+    var curr = stack.pop();
+    var validNeighbors = noWallUnvisitedNeighbors(curr, visited);
+    // console.log(unvisited);
+    if (validNeighbors.length !== 0){
+      stack.push(curr);
+      //Choose one of valid neighbors
+      var next = validNeighbors[getRandomInt(validNeighbors.length)];
+      var nextCoords = getCoords(next);
+      visited[nextCoords["row"]][nextCoords["col"]] = true;
+      stack.push(next);
+      if (next.classList.contains("end")){
+        return stack;
+      }
+    }
+  }
+}
+
+function noWallUnvisitedNeighbors(cell, visited){
+  var validNeighbors = [];
+  var currCoords = getCoords(cell);
+  var tempId;
+  var tempCell;
+  var tempRow = currCoords["row"];
+  var tempCol = currCoords["col"];
+  // Check cell on top
+  if (tempRow !== 0 && cell.style.borderTop === "0px"){
+    tempId = "cell_r" + (tempRow - 1) + "_c" + tempCol;
+    // console.log(tempId);
+    tempCell = document.getElementById(tempId);
+    // console.log(visited[tempRow - 1][tempCol]);
+    if (!visited[tempRow - 1][tempCol]){
+      validNeighbors.push(tempCell);
+    }
+  }
+  // Check cell below
+  if (tempRow !== visited.length - 1 && cell.style.borderBottom === "0px"){
+    tempId = "cell_r" + (tempRow + 1) + "_c" + tempCol;
+    // console.log(tempId);
+    tempCell = document.getElementById(tempId);
+    if (!visited[tempRow + 1][tempCol]){
+      validNeighbors.push(tempCell);
+    }
+  }
+  // Check cell to left
+  if (tempCol !== 0 && cell.style.borderLeft === "0px"){
+    tempId = "cell_r" + tempRow + "_c" + (tempCol - 1);
+    // console.log(tempId);
+    tempCell = document.getElementById(tempId);
+    if (!visited[tempRow][tempCol - 1]){
+      validNeighbors.push(tempCell);
+    }
+  }
+  // Check cell to right
+  if (tempCol !== visited[tempRow].length - 1 && cell.style.borderRight === "0px"){
+    tempId = "cell_r" + tempRow + "_c" + (tempCol + 1);
+    // console.log(tempId);
+    tempCell = document.getElementById(tempId);
+    if (!visited[tempRow][tempCol + 1]){
+      validNeighbors.push(tempCell);
+    }
+  }
+  return validNeighbors;
+}
+console.log(mazeSolver());
+
+function mazeGenRecursiveDivision(rows = defaultRows, cols = defaultCols){
 
 }
 window.onload=init;
