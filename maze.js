@@ -96,18 +96,33 @@ function dotheneedful(sibling) {
       startCell.focus();
       sibling.focus();
       startCell = sibling;
+      //console.log(sibling);
+      sibling.style.transition = "all 2s";
       sibling.appendChild(avatar);
+      avatar.style.background = '#' + Math.floor(Math.random()*16777215).toString(16);;
   }
+}
+
+function checkEnd(s, e) {
+    if (s === e) {
+	var modal = document.getElementById("myModal");
+	var captionText = document.getElementById("caption");
+	modal.style.display = "block";
+	captionText.innerHTML = "Finished!"
+	var span = document.getElementsByClassName("close")[0];
+	span.onclick = function() {
+	    modal.style.display = "none";
+	} 
+    }
 }
 
 function getKeyAndMove(e){
     var key_code = e.which||e.keyCode;
     switch(key_code){
     case 37: //left arrow key
-	//console.log(startCell.lastChild);
-	//startCell.removeChild(startCell.lastChild);
 	if (startCell.style.borderLeft === '') break;
 	var sibling = startCell.previousElementSibling;
+	checkEnd(sibling, endCell);
 	dotheneedful(sibling);
 	e.preventDefault();
 	//moveLeft();
@@ -120,6 +135,7 @@ function getKeyAndMove(e){
 	if (startCell.style.borderTop === '') break;
 	if (nextrow != null) {
 	    var sibling = nextrow.cells[idx];
+	    checkEnd(sibling, endCell);
 	    dotheneedful(sibling);
 	}
 	//moveUp();
@@ -128,14 +144,8 @@ function getKeyAndMove(e){
 	e.preventDefault();
 	if (startCell.style.borderRight === '') break;
 	var sibling = startCell.nextElementSibling;
+	checkEnd(sibling, endCell);
 	dotheneedful(sibling);
-	//console.log(e.target);
-	//console.log(avatar.style['left']);
-	/*if (avatar.style['left'] === '50px') {
-	    moveUp();
-	} else {
-	    moveRight();
-	    }*/
 	//moveRight();
 	break;
     case 40: //down arrow key
@@ -144,6 +154,7 @@ function getKeyAndMove(e){
 	var nextrow = startCell.parentElement.nextElementSibling;
 	if (nextrow != null) {
 	    var sibling = nextrow.cells[idx];
+	    checkEnd(sibling, endCell);
 	    dotheneedful(sibling);
 	}
 	e.preventDefault();
