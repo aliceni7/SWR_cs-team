@@ -2,6 +2,22 @@ var avatar = document.getElementById('dot');
 var defaultRows = 8;
 var defaultCols = 8;
 
+// Character creation
+var character_select = document.getElementById('character-select');
+character_select.style.display = "block";
+var spann = document.getElementsByClassName("close")[0];
+spann.onclick = function() {
+    character_select.style.display = "none";
+}
+var char_desc = document.getElementById("woot");
+woot.innerHTML = "Customize your character.";
+function select(color) {
+    console.log(color);
+    avatar.style.background = color;
+    character_select.style.display = "none";
+}
+
+
 // Creates an empty grid with start and end cells in HTML file and returns the maze
 function makeBlankBacktrackMaze(rows = defaultRows, cols = defaultCols){
     var table = document.createElement("table");
@@ -11,21 +27,21 @@ function makeBlankBacktrackMaze(rows = defaultRows, cols = defaultCols){
     for (var r = 0; r < rows; r++){
         tablerow = document.createElement("tr");
         for (var c = 0; c < cols; c++){
-          tabledata = document.createElement("td");
-          tabledata.id = "cell_r" + r + "_c" + c;
-          if (r === 0){
-            tabledata.classList.add("topborder");
-          }
-          if (c === 0){
-            tabledata.classList.add("leftborder");
-          }
-          if (r === rows - 1){
-            tabledata.classList.add("botborder");
-          }
-          if (c === cols - 1){
-            tabledata.classList.add("rightborder");
-          }
-          tablerow.appendChild(tabledata);
+            tabledata = document.createElement("td");
+            tabledata.id = "cell_r" + r + "_c" + c;
+            if (r === 0){
+		tabledata.classList.add("topborder");
+            }
+            if (c === 0){
+		tabledata.classList.add("leftborder");
+            }
+            if (r === rows - 1){
+		tabledata.classList.add("botborder");
+            }
+            if (c === cols - 1){
+		tabledata.classList.add("rightborder");
+            }
+            tablerow.appendChild(tabledata);
         }
         tbody.appendChild(tablerow);
     }
@@ -36,49 +52,49 @@ function makeBlankBacktrackMaze(rows = defaultRows, cols = defaultCols){
 
 // returns a random integer between 0 and the given maximum (noninclusive) parameter
 function getRandomInt(max){
-  return Math.floor(Math.random() * Math.floor(max));
+    return Math.floor(Math.random() * Math.floor(max));
 }
 
 // Determines a start and end cell and returns the maze
 var startCell, endCell;
 function makeStartEndCells(rows = defaultRows, cols = defaultCols){
-  var maze = document.getElementsByTagName("tbody")[0];
-  // determine start and end of maze
-  var mazeOrient = getRandomInt(4);
-  switch(mazeOrient){
+    var maze = document.getElementsByTagName("tbody")[0];
+    // determine start and end of maze
+    var mazeOrient = getRandomInt(4);
+    switch(mazeOrient){
     case 0:
-      var leftBorder = maze.getElementsByClassName("leftborder");
-      startCell = leftBorder[getRandomInt(rows)];
-      startCell.style.borderLeft = "0px";
-      var rightBorder = maze.getElementsByClassName("rightborder");
-      endCell = rightBorder[getRandomInt(rows)];
-      endCell.style.borderRight = "0px";
-      break;
+	var leftBorder = maze.getElementsByClassName("leftborder");
+	startCell = leftBorder[getRandomInt(rows)];
+	startCell.style.borderLeft = "0px";
+	var rightBorder = maze.getElementsByClassName("rightborder");
+	endCell = rightBorder[getRandomInt(rows)];
+	endCell.style.borderRight = "0px";
+	break;
     case 1:
-      var rightBorder = maze.getElementsByClassName("rightborder");
-      startCell = rightBorder[getRandomInt(rows)];
-      startCell.style.borderRight = "0px";
-      var leftBorder = maze.getElementsByClassName("leftborder");
-      endCell = leftBorder[getRandomInt(rows)];
-      endCell.style.borderLeft = "0px";
-      break;
+	var rightBorder = maze.getElementsByClassName("rightborder");
+	startCell = rightBorder[getRandomInt(rows)];
+	startCell.style.borderRight = "0px";
+	var leftBorder = maze.getElementsByClassName("leftborder");
+	endCell = leftBorder[getRandomInt(rows)];
+	endCell.style.borderLeft = "0px";
+	break;
     case 2:
-      var topBorder = maze.getElementsByClassName("topborder");
-      startCell = topBorder[getRandomInt(cols)];
-      startCell.style.borderTop = "0px";
-      var botBorder = maze.getElementsByClassName("botborder");
-      endCell = botBorder[getRandomInt(cols)];
-      endCell.style.borderBottom = "0px";
-      break;
+	var topBorder = maze.getElementsByClassName("topborder");
+	startCell = topBorder[getRandomInt(cols)];
+	startCell.style.borderTop = "0px";
+	var botBorder = maze.getElementsByClassName("botborder");
+	endCell = botBorder[getRandomInt(cols)];
+	endCell.style.borderBottom = "0px";
+	break;
     default:
-      var botBorder = maze.getElementsByClassName("botborder");
-      startCell = botBorder[getRandomInt(cols)];
-      startCell.style.borderBottom = "0px";
-      var topBorder = maze.getElementsByClassName("topborder");
-      endCell = topBorder[getRandomInt(cols)];
-      endCell.style.borderTop = "0px";
-      break;
-  }
+	var botBorder = maze.getElementsByClassName("botborder");
+	startCell = botBorder[getRandomInt(cols)];
+	startCell.style.borderBottom = "0px";
+	var topBorder = maze.getElementsByClassName("topborder");
+	endCell = topBorder[getRandomInt(cols)];
+	endCell.style.borderTop = "0px";
+	break;
+    }
     startCell.classList.add("start");
     endCell.classList.add("end");
     startCell.appendChild(avatar);
@@ -92,15 +108,15 @@ function init() {
 }
 
 function dotheneedful(sibling) {
-  if (sibling != null) {
-      startCell.focus();
-      sibling.focus();
-      startCell = sibling;
-      //console.log(sibling);
-      sibling.style.transition = "all 2s";
-      sibling.appendChild(avatar);
-      avatar.style.background = '#' + Math.floor(Math.random()*16777215).toString(16);;
-  }
+    if (sibling != null) {
+	startCell.focus();
+	sibling.focus();
+	startCell = sibling;
+	//console.log(sibling);
+	sibling.style.transition = "all 2s";
+	sibling.appendChild(avatar);
+	//avatar.style.background = '#' + Math.floor(Math.random()*16777215).toString(16);;
+    }
 }
 
 function checkEnd(s, e) {
@@ -109,7 +125,7 @@ function checkEnd(s, e) {
 	var captionText = document.getElementById("caption");
 	modal.style.display = "block";
 	captionText.innerHTML = "Finished!"
-	var span = document.getElementsByClassName("close")[0];
+	var span = document.getElementsByClassName("close")[1];
 	span.onclick = function() {
 	    modal.style.display = "none";
 	} 
@@ -182,133 +198,133 @@ window.onload = init;
 
 // Given a cell returns an object with the given cell's row and col number
 function getCoords(cell){
-  var id = cell.id;
-  var row = id.slice(cell.id.indexOf("_") + 2, cell.id.lastIndexOf("_"));
-  var col = id.slice(cell.id.lastIndexOf("_") + 2, id.length);
-  return {
-    "row": parseInt(row),
-    "col": parseInt(col)
-  }
+    var id = cell.id;
+    var row = id.slice(cell.id.indexOf("_") + 2, cell.id.lastIndexOf("_"));
+    var col = id.slice(cell.id.lastIndexOf("_") + 2, id.length);
+    return {
+	"row": parseInt(row),
+	"col": parseInt(col)
+    }
 }
 
 /* Pseudocode
-    Choose the initial cell, mark it as visited and push it to the stack
-      While the stack is not empty
-        Pop a cell from the stack and make it a current cell
-        If the current cell has any neighbours which have not been visited
-          Push the current cell to the stack
-          Choose one of the unvisited neighbors
-          Remove the wall between the current cell and the chosen cell
-          Mark the chosen cell as visited and push it to the stack
+   Choose the initial cell, mark it as visited and push it to the stack
+   While the stack is not empty
+   Pop a cell from the stack and make it a current cell
+   If the current cell has any neighbours which have not been visited
+   Push the current cell to the stack
+   Choose one of the unvisited neighbors
+   Remove the wall between the current cell and the chosen cell
+   Mark the chosen cell as visited and push it to the stack
 */
 function mazeGenBacktracking(rows = defaultRows, cols = defaultCols){
-  var maze = makeBlankBacktrackMaze(rows, cols);
-  var start = document.getElementsByClassName("start")[0];
-  var stack = [];
-  var visited = makeVisitedArray(rows, cols);
-  var startCoords = getCoords(start);
-  stack.push(start);
-  visited[startCoords["row"]][startCoords["col"]] = true;
-  backtrackGenHelper(stack, visited, maze);
+    var maze = makeBlankBacktrackMaze(rows, cols);
+    var start = document.getElementsByClassName("start")[0];
+    var stack = [];
+    var visited = makeVisitedArray(rows, cols);
+    var startCoords = getCoords(start);
+    stack.push(start);
+    visited[startCoords["row"]][startCoords["col"]] = true;
+    backtrackGenHelper(stack, visited, maze);
 }
 
 function backtrackGenHelper(stack, visited, maze){
-  while (stack.length !== 0){
-    var curr = stack.pop();
-    var unvisited = unvisitedNeighbors(curr, visited);
-    if (unvisited.length !== 0){
-      stack.push(curr);
-      //Choose one of unvisited neighbors
-      var next = unvisited[getRandomInt(unvisited.length)];
-      var nextCoords = getCoords(next);
-      removeWall(curr, next);
-      visited[nextCoords["row"]][nextCoords["col"]] = true;
-      stack.push(next);
+    while (stack.length !== 0){
+	var curr = stack.pop();
+	var unvisited = unvisitedNeighbors(curr, visited);
+	if (unvisited.length !== 0){
+	    stack.push(curr);
+	    //Choose one of unvisited neighbors
+	    var next = unvisited[getRandomInt(unvisited.length)];
+	    var nextCoords = getCoords(next);
+	    removeWall(curr, next);
+	    visited[nextCoords["row"]][nextCoords["col"]] = true;
+	    stack.push(next);
+	}
     }
-  }
 }
 
 // Returns a rows by cols sized array filled with falses
 function makeVisitedArray(rows, cols){
-  var temp = [];
-  for (var r = 0; r < rows; r++){
-    temp.push([]);
-    for(var c = 0; c < cols; c++){
-      temp[r].push(false);
+    var temp = [];
+    for (var r = 0; r < rows; r++){
+	temp.push([]);
+	for(var c = 0; c < cols; c++){
+	    temp[r].push(false);
+	}
     }
-  }
-  return temp;
+    return temp;
 }
 
 // Takes two cells and removes the adjacent wall. Doesn't return anything
 function removeWall(start, end){
-  var startCoords = getCoords(start);
-  var endCoords = getCoords(end);
-  var relativePosition = [endCoords["row"] - startCoords["row"], endCoords["col"] - startCoords["col"]];
-  switch (relativePosition.join(' ')){
-    // start is on top of end
+    var startCoords = getCoords(start);
+    var endCoords = getCoords(end);
+    var relativePosition = [endCoords["row"] - startCoords["row"], endCoords["col"] - startCoords["col"]];
+    switch (relativePosition.join(' ')){
+	// start is on top of end
     case "1 0":
-      start.style.borderBottom = "0px";
-      end.style.borderTop = "0px";
-      break;
-    // start is below end
+	start.style.borderBottom = "0px";
+	end.style.borderTop = "0px";
+	break;
+	// start is below end
     case "-1 0":
-      start.style.borderTop = "0px";
-      end.style.borderBottom = "0px";
-      break;
-    // start is to the left of end
+	start.style.borderTop = "0px";
+	end.style.borderBottom = "0px";
+	break;
+	// start is to the left of end
     case "0 1":
-      start.style.borderRight = "0px";
-      end.style.borderLeft = "0px";
-      break;
-    // start is to the right of end
+	start.style.borderRight = "0px";
+	end.style.borderLeft = "0px";
+	break;
+	// start is to the right of end
     case "0 -1":
-      start.style.borderLeft = "0px";
-      end.style.borderRight = "0px";
-      break;
-  }
+	start.style.borderLeft = "0px";
+	end.style.borderRight = "0px";
+	break;
+    }
 }
 // Returns an array of unvisited neighboring cells
 function unvisitedNeighbors(cell, visited){
-  var unvisited = [];
-  var currCoords = getCoords(cell);
-  var tempId;
-  var tempCell;
-  var tempRow = currCoords["row"];
-  var tempCol = currCoords["col"];
-  // Check cell on top
-  if (tempRow !== 0){
-    tempId = "cell_r" + (tempRow - 1) + "_c" + tempCol;
-    tempCell = document.getElementById(tempId);
-    if (!visited[tempRow - 1][tempCol]){
-      unvisited.push(tempCell);
+    var unvisited = [];
+    var currCoords = getCoords(cell);
+    var tempId;
+    var tempCell;
+    var tempRow = currCoords["row"];
+    var tempCol = currCoords["col"];
+    // Check cell on top
+    if (tempRow !== 0){
+	tempId = "cell_r" + (tempRow - 1) + "_c" + tempCol;
+	tempCell = document.getElementById(tempId);
+	if (!visited[tempRow - 1][tempCol]){
+	    unvisited.push(tempCell);
+	}
     }
-  }
-  // Check cell below
-  if (tempRow !== visited.length - 1){
-    tempId = "cell_r" + (tempRow + 1) + "_c" + tempCol;
-    tempCell = document.getElementById(tempId);
-    if (!visited[tempRow + 1][tempCol]){
-      unvisited.push(tempCell);
+    // Check cell below
+    if (tempRow !== visited.length - 1){
+	tempId = "cell_r" + (tempRow + 1) + "_c" + tempCol;
+	tempCell = document.getElementById(tempId);
+	if (!visited[tempRow + 1][tempCol]){
+	    unvisited.push(tempCell);
+	}
     }
-  }
-  // Check cell to left
-  if (tempCol !== 0){
-    tempId = "cell_r" + tempRow + "_c" + (tempCol - 1);
-    tempCell = document.getElementById(tempId);
-    if (!visited[tempRow][tempCol - 1]){
-      unvisited.push(tempCell);
+    // Check cell to left
+    if (tempCol !== 0){
+	tempId = "cell_r" + tempRow + "_c" + (tempCol - 1);
+	tempCell = document.getElementById(tempId);
+	if (!visited[tempRow][tempCol - 1]){
+	    unvisited.push(tempCell);
+	}
     }
-  }
-  // Check cell to right
-  if (tempCol !== visited[tempRow].length - 1){
-    tempId = "cell_r" + tempRow + "_c" + (tempCol + 1);
-    tempCell = document.getElementById(tempId);
-    if (!visited[tempRow][tempCol + 1]){
-      unvisited.push(tempCell);
+    // Check cell to right
+    if (tempCol !== visited[tempRow].length - 1){
+	tempId = "cell_r" + tempRow + "_c" + (tempCol + 1);
+	tempCell = document.getElementById(tempId);
+	if (!visited[tempRow][tempCol + 1]){
+	    unvisited.push(tempCell);
+	}
     }
-  }
-  return unvisited;
+    return unvisited;
 }
 
 console.log(maze_container.classList);
@@ -317,77 +333,79 @@ mazeGenBacktracking();
 
 //Returns an array containing the cells in sequential order from start to end making up the path through the maze
 function mazeSolver(rows = defaultRows, cols = defaultCols){
-  var maze = document.getElementById("maze_container");
-  var start = document.getElementsByClassName("start")[0];
-  var stack = [];
-  var visited = makeVisitedArray(rows, cols);
-  var startCoords = getCoords(start);
-  stack.push(start);
-  visited[startCoords["row"]][startCoords["col"]] = true;
-  return solveHelper(stack, visited, maze);
+    var maze = document.getElementById("maze_container");
+    var start = document.getElementsByClassName("start")[0];
+    var stack = [];
+    var visited = makeVisitedArray(rows, cols);
+    var startCoords = getCoords(start);
+    stack.push(start);
+    visited[startCoords["row"]][startCoords["col"]] = true;
+    return solveHelper(stack, visited, maze);
 }
 
 function solveHelper(stack, visited, maze){
-  while (stack.length !== 0){
-    var curr = stack.pop();
-    var validNeighbors = noWallUnvisitedNeighbors(curr, visited);
-    if (validNeighbors.length !== 0){
-      stack.push(curr);
-      //Choose one of valid neighbors
-      var next = validNeighbors[getRandomInt(validNeighbors.length)];
-      var nextCoords = getCoords(next);
-      visited[nextCoords["row"]][nextCoords["col"]] = true;
-      stack.push(next);
-      if (next.classList.contains("end")){
-        return stack;
-      }
+    while (stack.length !== 0){
+	var curr = stack.pop();
+	var validNeighbors = noWallUnvisitedNeighbors(curr, visited);
+	if (validNeighbors.length !== 0){
+	    stack.push(curr);
+	    //Choose one of valid neighbors
+	    var next = validNeighbors[getRandomInt(validNeighbors.length)];
+	    var nextCoords = getCoords(next);
+	    visited[nextCoords["row"]][nextCoords["col"]] = true;
+	    stack.push(next);
+	    if (next.classList.contains("end")){
+		return stack;
+	    }
+	}
     }
-  }
 }
 
 function noWallUnvisitedNeighbors(cell, visited){
-  var validNeighbors = [];
-  var currCoords = getCoords(cell);
-  var tempId;
-  var tempCell;
-  var tempRow = currCoords["row"];
-  var tempCol = currCoords["col"];
-  // Check cell on top
-  if (tempRow !== 0 && cell.style.borderTop === "0px"){
-    tempId = "cell_r" + (tempRow - 1) + "_c" + tempCol;
-    tempCell = document.getElementById(tempId);
-    if (!visited[tempRow - 1][tempCol]){
-      validNeighbors.push(tempCell);
+    var validNeighbors = [];
+    var currCoords = getCoords(cell);
+    var tempId;
+    var tempCell;
+    var tempRow = currCoords["row"];
+    var tempCol = currCoords["col"];
+    // Check cell on top
+    if (tempRow !== 0 && cell.style.borderTop === "0px"){
+	tempId = "cell_r" + (tempRow - 1) + "_c" + tempCol;
+	tempCell = document.getElementById(tempId);
+	if (!visited[tempRow - 1][tempCol]){
+	    validNeighbors.push(tempCell);
+	}
     }
-  }
-  // Check cell below
-  if (tempRow !== visited.length - 1 && cell.style.borderBottom === "0px"){
-    tempId = "cell_r" + (tempRow + 1) + "_c" + tempCol;
-    tempCell = document.getElementById(tempId);
-    if (!visited[tempRow + 1][tempCol]){
-      validNeighbors.push(tempCell);
+    // Check cell below
+    if (tempRow !== visited.length - 1 && cell.style.borderBottom === "0px"){
+	tempId = "cell_r" + (tempRow + 1) + "_c" + tempCol;
+	tempCell = document.getElementById(tempId);
+	if (!visited[tempRow + 1][tempCol]){
+	    validNeighbors.push(tempCell);
+	}
     }
-  }
-  // Check cell to left
-  if (tempCol !== 0 && cell.style.borderLeft === "0px"){
-    tempId = "cell_r" + tempRow + "_c" + (tempCol - 1);
-    tempCell = document.getElementById(tempId);
-    if (!visited[tempRow][tempCol - 1]){
-      validNeighbors.push(tempCell);
+    // Check cell to left
+    if (tempCol !== 0 && cell.style.borderLeft === "0px"){
+	tempId = "cell_r" + tempRow + "_c" + (tempCol - 1);
+	tempCell = document.getElementById(tempId);
+	if (!visited[tempRow][tempCol - 1]){
+	    validNeighbors.push(tempCell);
+	}
     }
-  }
-  // Check cell to right
-  if (tempCol !== visited[tempRow].length - 1 && cell.style.borderRight === "0px"){
-    tempId = "cell_r" + tempRow + "_c" + (tempCol + 1);
-    tempCell = document.getElementById(tempId);
-    if (!visited[tempRow][tempCol + 1]){
-      validNeighbors.push(tempCell);
+    // Check cell to right
+    if (tempCol !== visited[tempRow].length - 1 && cell.style.borderRight === "0px"){
+	tempId = "cell_r" + tempRow + "_c" + (tempCol + 1);
+	tempCell = document.getElementById(tempId);
+	if (!visited[tempRow][tempCol + 1]){
+	    validNeighbors.push(tempCell);
+	}
     }
-  }
-  return validNeighbors;
+    return validNeighbors;
 }
 console.log(mazeSolver());
 
 function mazeGenRecursiveDivision(rows = defaultRows, cols = defaultCols){
 
 }
+
+

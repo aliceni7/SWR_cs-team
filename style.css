@@ -21,6 +21,29 @@
   background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
 }
 
+/* Character Modal */
+#character-select {
+    background-color: rgba(0,50,0,0.9); /* Black w/ opacity */
+}
+
+#woot {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+  font-size: 60px;
+}
+
+#character {
+    margin: auto;
+    #display: block;
+    text-align: center;
+}
+
 /* Modal Content (Image) */
 .modal-content {
   margin: auto;
@@ -43,7 +66,7 @@
 }
 
 /* Add Animation - Zoom in the Modal */
-.modal-content, #caption {
+.modal-content, #caption, #myModal {
   animation-name: zoom;
   animation-duration: 0.6s;
 }
@@ -107,3 +130,6 @@ table {
 .end {
   background-color: red;
 }
+
+
+
