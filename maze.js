@@ -1,52 +1,23 @@
-//init object globally
-var avatar= null;
+var avatar = document.getElementById('dot');
 var defaultRows = 8;
 var defaultCols = 8;
-function init(){
-    avatar=document.getElementById("dot");
-    avatar.style.position='relative';
-    avatar.style.left='0px';
-    avatar.style.top='0px';
+var startCell, endCell;
+
+// Character creation
+var character_select = document.getElementById('character-select');
+character_select.style.display = "block";
+var spann = document.getElementsByClassName("close")[0];
+spann.onclick = function() {
+    character_select.style.display = "none";
 }
-function getKeyAndMove(e){
-    var key_code=e.which||e.keyCode;
-    switch(key_code){
-    case 37: //left arrow key
-	e.preventDefault();
-	moveLeft();
-	break;
-    case 38: //Up arrow key
-	e.preventDefault();
-	moveUp();
-	break;
-    case 39: //right arrow key
-	e.preventDefault();
-	console.log(avatar.style['left']);
-	/*if (avatar.style['left'] === '50px') {
-	    moveUp();
-	} else {
-	    moveRight();
-	    }*/
-	moveRight();
-	break;
-    case 40: //down arrow key
-	e.preventDefault();
-	moveDown();
-	break;
-    }
+var char_desc = document.getElementById("woot");
+woot.innerHTML = "Customize your character.";
+function select(color) {
+    console.log(color);
+    avatar.style.background = color;
+    character_select.style.display = "none";
 }
-function moveLeft(){
-    avatar.style.left=parseInt(avatar.style.left)-10 +'px';
-}
-function moveUp(){
-    avatar.style.top=parseInt(avatar.style.top)-10 +'px';
-}
-function moveRight(){
-    avatar.style.left=parseInt(avatar.style.left)+10 +'px';
-}
-function moveDown(){
-    avatar.style.top=parseInt(avatar.style.top)+10 +'px';
-}
+
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
 function makeBlankBacktrackMaze(rows = defaultRows, cols = defaultCols){
@@ -88,7 +59,6 @@ function getRandomInt(max){
 // Determines a start and end cell and returns the maze
 function makeStartEndCells(rows = defaultRows, cols = defaultCols){
   var maze = document.getElementsByTagName("tbody")[0];
-  var startCell, endCell;
   // determine start and end of maze
   var mazeOrient = getRandomInt(4);
   switch(mazeOrient){
@@ -128,6 +98,99 @@ function makeStartEndCells(rows = defaultRows, cols = defaultCols){
   startCell.classList.add("start");
   endCell.classList.add("end");
   return maze;
+}
+
+function init() {
+    avatar.style.position='relative';
+    avatar.style.left='20px';
+    avatar.style.top='0px';
+}
+
+function dotheneedful(sibling) {
+    if (sibling != null) {
+	startCell.focus();
+	sibling.focus();
+	startCell = sibling;
+	//console.log(sibling);
+	sibling.style.transition = "all 2s";
+	sibling.appendChild(avatar);
+	//avatar.style.background = '#' + Math.floor(Math.random()*16777215).toString(16);;
+    }
+}
+
+function checkEnd(s, e) {
+    if (s === e) {
+      	var modal = document.getElementById("myModal");
+      	var captionText = document.getElementById("caption");
+      	modal.style.display = "block";
+      	captionText.innerHTML = "Finished!"
+      	var span = document.getElementsByClassName("close")[1];
+      	span.onclick = function() {
+      	    modal.style.display = "none";
+      	}
+    }
+}
+
+function getKeyAndMove(e){
+    var key_code = e.which||e.keyCode;
+    switch(key_code){
+    case 37: //left arrow key
+      	if (startCell.style.borderLeft === '') break;
+      	var sibling = startCell.previousElementSibling;
+      	checkEnd(sibling, endCell);
+      	dotheneedful(sibling);
+      	e.preventDefault();
+      	//moveLeft();
+      	break;
+          case 38: //Up arrow key
+      	e.preventDefault();
+      	var idx = startCell.cellIndex;
+      	var nextrow = startCell.parentElement.previousElementSibling;
+      	console.log(startCell.style.borderBottom);
+      	if (startCell.style.borderTop === '') break;
+      	if (nextrow != null) {
+      	    var sibling = nextrow.cells[idx];
+      	    checkEnd(sibling, endCell);
+      	    dotheneedful(sibling);
+      	}
+      	//moveUp();
+      	break;
+          case 39: //right arrow key
+      	e.preventDefault();
+      	if (startCell.style.borderRight === '') break;
+      	var sibling = startCell.nextElementSibling;
+      	checkEnd(sibling, endCell);
+      	dotheneedful(sibling);
+      	//moveRight();
+      	break;
+          case 40: //down arrow key
+      	if (startCell.style.borderBottom === '') break;
+      	var idx = startCell.cellIndex;
+      	var nextrow = startCell.parentElement.nextElementSibling;
+      	if (nextrow != null) {
+      	    var sibling = nextrow.cells[idx];
+      	    checkEnd(sibling, endCell);
+      	    dotheneedful(sibling);
+      	}
+      	e.preventDefault();
+      	//moveDown();
+      	break;
+    }
+}
+function moveLeft(){
+    avatar.style.left=parseInt(avatar.style.left)-10 +'px';
+}
+function moveUp(){
+    avatar.style.top=parseInt(avatar.style.top)-10 +'px';
+}
+function moveRight(){
+    console.log(this.screen);
+    if ($("td").hasClass('b')) return;
+    console.log($("td"));
+    avatar.style.left=parseInt(avatar.style.left)+10 +'px';
+}
+function moveDown(){
+    avatar.style.top=parseInt(avatar.style.top)+10 +'px';
 }
 
 // Given a cell returns an object with the given cell's row and col number
@@ -261,9 +324,11 @@ function unvisitedNeighbors(cell, visited){
   return unvisited;
 }
 
+console.log(maze_container.classList);
+
 mazeGenBacktracking();
 
-//Returns an array containing the cells in sequential order from start to end making up the path through the maze
+// Returns an array containing the cells in sequential order from start to end making up the path through the maze
 function mazeSolver(rows = defaultRows, cols = defaultCols){
   var start = document.getElementsByClassName("start")[0];
   var stack = [];
