@@ -4,7 +4,7 @@ var defaultCols = 8;
 var maze = []; //will be a 2d array of "cells" containing info about walls
 var startCell, endCell;
 var ROW = 0;
-var COL = 0;
+var COL = 1;
 
 var canvas = document.querySelector('canvas');
 var c = canvas.getContext('2d');
@@ -18,6 +18,7 @@ function init(){
   console.log(maze);
   // console.log(mazeSolver());
 }
+
 // Creates an empty grid with start and end cells in HTML file and returns the maze
 function makeBlankMaze(rows = defaultRows, cols = defaultCols){
     maze = [];
@@ -70,22 +71,43 @@ function getRandomInt(max){
 // Determines startCell and endCell
 function makeStartEndCells(rows = defaultRows, cols = defaultCols){
   var mazeOrient = getRandomInt(4);
+  var tempIdx;
   switch(mazeOrient){
     case 0: //start left end right
       startCell = [getRandomInt(rows), 0];
+      tempIdx = maze[startCell[ROW]][startCell[COL]].walls.indexOf('left');
+      maze[startCell[ROW]][startCell[COL]].walls.splice(tempIdx, 1);
+
       endCell = [getRandomInt(rows), cols - 1];
+      tempIdx = maze[endCell[ROW]][endCell[COL]].walls.indexOf('right');
+      maze[endCell[ROW]][endCell[COL]].walls.splice(tempIdx, 1);
       break;
     case 1: // start right end left
       startCell = [getRandomInt(rows), cols - 1];
+      tempIdx = maze[startCell[ROW]][startCell[COL]].walls.indexOf('right');
+      maze[startCell[ROW]][startCell[COL]].walls.splice(tempIdx, 1);
+
       endCell = [getRandomInt(rows), 0];
+      tempIdx = maze[endCell[ROW]][endCell[COL]].walls.indexOf('left');
+      maze[endCell[ROW]][endCell[COL]].walls.splice(tempIdx, 1);
       break;
     case 2: //start top end bot
       startCell = [0, getRandomInt(cols)];
+      tempIdx = maze[startCell[ROW]][startCell[COL]].walls.indexOf('top');
+      maze[startCell[ROW]][startCell[COL]].walls.splice(tempIdx, 1);
+
       endCell = [rows - 1, getRandomInt(cols)];
+      tempIdx = maze[endCell[ROW]][endCell[COL]].walls.indexOf('bot');
+      maze[endCell[ROW]][endCell[COL]].walls.splice(tempIdx, 1);
       break;
     default: // start bot end top
       startCell = [rows - 1, getRandomInt(cols)];
+      tempIdx = maze[startCell[ROW]][startCell[COL]].walls.indexOf('bot');
+      maze[startCell[ROW]][startCell[COL]].walls.splice(tempIdx, 1);
+
       endCell = [0, getRandomInt(cols)];
+      tempIdx = maze[endCell[ROW]][endCell[COL]].walls.indexOf('top');
+      maze[endCell[ROW]][endCell[COL]].walls.splice(tempIdx, 1);
       break;
   }
   console.log(startCell);
@@ -107,8 +129,8 @@ function mazeGenBacktracking(rows = defaultRows, cols = defaultCols){
   var visited = makeArray(rows, cols, false);
   stack.push(startCell);
   visited[startCell[ROW]][startCell[COL]] = true;
-  console.log(visited);
-  // backtrackGenHelper(stack, visited, maze);
+  // console.log(visited);
+  backtrackGenHelper(stack, visited, maze);
 }
 
 function backtrackGenHelper(stack, visited, maze){
@@ -120,12 +142,11 @@ function backtrackGenHelper(stack, visited, maze){
       stack.push(curr);
       //Choose one of unvisited neighbors
       var next = unvisited[getRandomInt(unvisited.length)];
-      console.log(next);
+      // console.log(next);
       removeWall(curr, next);
       visited[next[ROW]][next[COL]] = true;
-      console.log(visited);
+      // console.log(visited);
       stack.push(next);
-      break;
     }
   }
 }
@@ -139,7 +160,7 @@ function makeArray(rows, cols, fillValue){
       temp[r].push(fillValue);
     }
   }
-  console.log(temp);
+  // console.log(temp);
   return temp;
 }
 
@@ -153,25 +174,23 @@ function removeWall(start, end){
       // console.log("1");
       tempIdx = maze[start[ROW]][start[COL]].walls.indexOf('bot');
       maze[start[ROW]][start[COL]].walls.splice(tempIdx, 1);
-      // start.style.borderBottom = "0px";
+
       tempIdx = maze[end[ROW]][end[COL]].walls.indexOf('top');
       maze[end[ROW]][end[COL]].walls.splice(tempIdx, 1);
-      // end.style.borderTop = "0px";
+
       break;
     // start is below end
     case "-1 0":
       // console.log("2");
-      // start.style.borderTop = "0px";
       tempIdx = maze[start[ROW]][start[COL]].walls.indexOf('top');
       maze[start[ROW]][start[COL]].walls.splice(tempIdx, 1);
-      // end.style.borderBottom = "0px";
+
       tempIdx = maze[end[ROW]][end[COL]].walls.indexOf('bot');
       maze[end[ROW]][end[COL]].walls.splice(tempIdx, 1);
       break;
     // start is to the left of end
     case "0 1":
       // console.log("2");
-      // start.style.borderRight = "0px";
       tempIdx = maze[start[ROW]][start[COL]].walls.indexOf('right');
       maze[start[ROW]][start[COL]].walls.splice(tempIdx, 1);
       // end.style.borderLeft = "0px";
@@ -181,7 +200,6 @@ function removeWall(start, end){
     // start is to the right of end
     case "0 -1":
       // console.log("2");
-      // start.style.borderLeft = "0px";
       tempIdx = maze[start[ROW]][start[COL]].walls.indexOf('left');
       maze[start[ROW]][start[COL]].walls.splice(tempIdx, 1);
       // end.style.borderRight = "0px";
