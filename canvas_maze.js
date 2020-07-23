@@ -19,7 +19,6 @@ function init(){
   mazeGenBacktracking();
   drawWalls();
   displayStartEnd();
-  console.log(maze);
   console.log(mazeSolver());
 }
 
@@ -32,7 +31,6 @@ function makeBlankMaze(rows = defaultRows, cols = defaultCols){
         maze[r].push({});
       }
     }
-    // console.log(maze);
     fillWalls();
     return makeStartEndCells(rows, cols);
 }
@@ -43,8 +41,6 @@ function fillWalls(rows = defaultRows, cols = defaultCols){
     for (var c = 0; c < cols; c++){
       maze[r][c].walls = ['top', 'bot', 'left', 'right'];
       maze[r][c].borders = [];
-      // console.log(r);
-      // console.log(c);
       if (r === 0){
         maze[r][c].borders.push('top');
       }
@@ -205,15 +201,12 @@ function backtrackGenHelper(stack, visited, maze){
   while (stack.length !== 0){
     var curr = stack.pop();
     var unvisited = unvisitedNeighbors(curr, visited);
-    // console.log(unvisited);
     if (unvisited.length !== 0){
       stack.push(curr);
       //Choose one of unvisited neighbors
       var next = unvisited[getRandomInt(unvisited.length)];
-      // console.log(next);
       removeWall(curr, next);
       visited[next[ROW]][next[COL]] = true;
-      // console.log(visited);
       stack.push(next);
     }
   }
@@ -228,7 +221,6 @@ function makeArray(rows, cols, fillValue){
       temp[r].push(fillValue);
     }
   }
-  // console.log(temp);
   return temp;
 }
 
@@ -239,7 +231,6 @@ function removeWall(start, end){
   switch (relativePosition.join(' ')){
     // start is on top of end
     case "1 0":
-      // console.log("1");
       tempIdx = maze[start[ROW]][start[COL]].walls.indexOf('bot');
       maze[start[ROW]][start[COL]].walls.splice(tempIdx, 1);
 
@@ -249,7 +240,6 @@ function removeWall(start, end){
       break;
     // start is below end
     case "-1 0":
-      // console.log("2");
       tempIdx = maze[start[ROW]][start[COL]].walls.indexOf('top');
       maze[start[ROW]][start[COL]].walls.splice(tempIdx, 1);
 
@@ -258,19 +248,17 @@ function removeWall(start, end){
       break;
     // start is to the left of end
     case "0 1":
-      // console.log("2");
       tempIdx = maze[start[ROW]][start[COL]].walls.indexOf('right');
       maze[start[ROW]][start[COL]].walls.splice(tempIdx, 1);
-      // end.style.borderLeft = "0px";
+
       tempIdx = maze[end[ROW]][end[COL]].walls.indexOf('left');
       maze[end[ROW]][end[COL]].walls.splice(tempIdx, 1);
       break;
     // start is to the right of end
     case "0 -1":
-      // console.log("2");
       tempIdx = maze[start[ROW]][start[COL]].walls.indexOf('left');
       maze[start[ROW]][start[COL]].walls.splice(tempIdx, 1);
-      // end.style.borderRight = "0px";
+
       tempIdx = maze[end[ROW]][end[COL]].walls.indexOf('right');
       maze[end[ROW]][end[COL]].walls.splice(tempIdx, 1);
       break;
