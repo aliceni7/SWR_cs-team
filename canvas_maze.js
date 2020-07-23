@@ -14,13 +14,27 @@ var ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-function init(){
-  makeBlankMaze();
-  mazeGenBacktracking();
+// var button = document.getElementById("generate_maze");
+var form = document.querySelector("form");
+form.onsubmit = function(){
+  var rows = form["maze_rows"].value;
+  var cols = form["maze_cols"].value;
+  console.log(rows);
+  console.log(cols);
+  // for some reason rows is cols and cols is rows so i just switched them :')
+  generateMaze(cols, rows);
+  return false;
+}
+
+function generateMaze(r = defaultRows, c = defaultCols) {
+  ctx.clearRect(0, 0, innerWidth, innerHeight);
+  makeBlankMaze(r, c);
+  mazeGenBacktracking(r, c);
   drawWalls();
   displayStartEnd();
-  console.log(mazeSolver());
+  console.log(mazeSolver(r, c));
 }
+
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
 function makeBlankMaze(rows = defaultRows, cols = defaultCols){
@@ -31,7 +45,7 @@ function makeBlankMaze(rows = defaultRows, cols = defaultCols){
         maze[r].push({});
       }
     }
-    fillWalls();
+    fillWalls(rows, cols);
     return makeStartEndCells(rows, cols);
 }
 
@@ -365,5 +379,4 @@ function noWallUnvisitedNeighbors(cell, visited){
   return validNeighbors;
 }
 
-
-init();
+// generateMaze();

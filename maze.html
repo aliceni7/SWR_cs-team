@@ -13,6 +13,18 @@
     </style>
   </head>
   <body>
+    <section class="maze_dimensions">
+      <form class="maze_dimensions" action="maze.html" action="#">
+        <label for="maze_rows">Rows</label>
+
+        <input type="number" name="maze_rows" id="maze_rows" value="8" min="6" max="16">
+        <br>
+        <label for="maze_cols">Cols</label>
+        <input type="number" name="maze_cols" id="maze_cols" value="8" min="6" max="16">
+        <br>
+        <input type="submit" name="submit" value="Generate maze!">
+      </form>
+    </section>
     <canvas></canvas>
     <script src="canvas_maze.js"></script>
   </body>
