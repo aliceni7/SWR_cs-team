@@ -80,7 +80,7 @@ function makeBlankBacktrackMaze(rows = defaultRows, cols = defaultCols){
     return makeStartEndCells(rows, cols);
 }
 
-// returns a random integer between 0 and the given maximum (noninclusive) parameter
+// Returns a random integer between 0 and the given maximum (noninclusive) parameter
 function getRandomInt(max){
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -89,7 +89,6 @@ function getRandomInt(max){
 function makeStartEndCells(rows = defaultRows, cols = defaultCols){
   var maze = document.getElementsByTagName("tbody")[0];
   var startCell, endCell;
-  // console.log(maze);
   // determine start and end of maze
   var mazeOrient = getRandomInt(4);
   switch(mazeOrient){
@@ -128,7 +127,6 @@ function makeStartEndCells(rows = defaultRows, cols = defaultCols){
   }
   startCell.classList.add("start");
   endCell.classList.add("end");
-  // console.log(maze);
   return maze;
 }
 
@@ -136,9 +134,7 @@ function makeStartEndCells(rows = defaultRows, cols = defaultCols){
 function getCoords(cell){
   var id = cell.id;
   var row = id.slice(cell.id.indexOf("_") + 2, cell.id.lastIndexOf("_"));
-  // console.log(row);
   var col = id.slice(cell.id.lastIndexOf("_") + 2, id.length);
-  // console.log(col);
   return {
     "row": parseInt(row),
     "col": parseInt(col)
@@ -159,8 +155,7 @@ function mazeGenBacktracking(rows = defaultRows, cols = defaultCols){
   var maze = makeBlankBacktrackMaze(rows, cols);
   var start = document.getElementsByClassName("start")[0];
   var stack = [];
-  var visited = makeVisitedArray(rows, cols);
-  // console.log(visited);
+  var visited = makeArray(rows, cols);
   var startCoords = getCoords(start);
   stack.push(start);
   visited[startCoords["row"]][startCoords["col"]] = true;
@@ -171,13 +166,11 @@ function backtrackGenHelper(stack, visited, maze){
   while (stack.length !== 0){
     var curr = stack.pop();
     var unvisited = unvisitedNeighbors(curr, visited);
-    // console.log(unvisited);
     if (unvisited.length !== 0){
       stack.push(curr);
       //Choose one of unvisited neighbors
       var next = unvisited[getRandomInt(unvisited.length)];
       var nextCoords = getCoords(next);
-      // console.log(next);
       removeWall(curr, next);
       visited[nextCoords["row"]][nextCoords["col"]] = true;
       stack.push(next);
@@ -186,7 +179,7 @@ function backtrackGenHelper(stack, visited, maze){
 }
 
 // Returns a rows by cols sized array filled with falses
-function makeVisitedArray(rows, cols){
+function makeArray(rows, cols){
   var temp = [];
   for (var r = 0; r < rows; r++){
     temp.push([]);
@@ -194,7 +187,6 @@ function makeVisitedArray(rows, cols){
       temp[r].push(false);
     }
   }
-  // console.log(temp);
   return temp;
 }
 
@@ -203,30 +195,24 @@ function removeWall(start, end){
   var startCoords = getCoords(start);
   var endCoords = getCoords(end);
   var relativePosition = [endCoords["row"] - startCoords["row"], endCoords["col"] - startCoords["col"]];
-  // console.log("relative position: '"+ relativePosition + "'");
-  // console.log(typeof relativePosition);
   switch (relativePosition.join(' ')){
     // start is on top of end
     case "1 0":
-      // console.log("1");
       start.style.borderBottom = "0px";
       end.style.borderTop = "0px";
       break;
     // start is below end
     case "-1 0":
-      // console.log("2");
       start.style.borderTop = "0px";
       end.style.borderBottom = "0px";
       break;
     // start is to the left of end
     case "0 1":
-      // console.log("2");
       start.style.borderRight = "0px";
       end.style.borderLeft = "0px";
       break;
     // start is to the right of end
     case "0 -1":
-      // console.log("2");
       start.style.borderLeft = "0px";
       end.style.borderRight = "0px";
       break;
@@ -241,17 +227,9 @@ function unvisitedNeighbors(cell, visited){
   var tempRow = currCoords["row"];
   var tempCol = currCoords["col"];
   // Check cell on top
-  /*
-  console.log(typeof currCoords["row"]);
-  console.log(currCoords["row"]);
-  console.log(typeof tempRow);
-  console.log(tempRow);
-  */
   if (tempRow !== 0){
     tempId = "cell_r" + (tempRow - 1) + "_c" + tempCol;
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
-    // console.log(visited[tempRow - 1][tempCol]);
     if (!visited[tempRow - 1][tempCol]){
       unvisited.push(tempCell);
     }
@@ -259,7 +237,6 @@ function unvisitedNeighbors(cell, visited){
   // Check cell below
   if (tempRow !== visited.length - 1){
     tempId = "cell_r" + (tempRow + 1) + "_c" + tempCol;
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow + 1][tempCol]){
       unvisited.push(tempCell);
@@ -268,7 +245,6 @@ function unvisitedNeighbors(cell, visited){
   // Check cell to left
   if (tempCol !== 0){
     tempId = "cell_r" + tempRow + "_c" + (tempCol - 1);
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow][tempCol - 1]){
       unvisited.push(tempCell);
@@ -277,7 +253,6 @@ function unvisitedNeighbors(cell, visited){
   // Check cell to right
   if (tempCol !== visited[tempRow].length - 1){
     tempId = "cell_r" + tempRow + "_c" + (tempCol + 1);
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow][tempCol + 1]){
       unvisited.push(tempCell);
@@ -290,22 +265,19 @@ mazeGenBacktracking();
 
 //Returns an array containing the cells in sequential order from start to end making up the path through the maze
 function mazeSolver(rows = defaultRows, cols = defaultCols){
-  var maze = document.getElementById("maze_container");
   var start = document.getElementsByClassName("start")[0];
   var stack = [];
-  var visited = makeVisitedArray(rows, cols);
-  // console.log(visited);
+  var visited = makeArray(rows, cols);
   var startCoords = getCoords(start);
   stack.push(start);
   visited[startCoords["row"]][startCoords["col"]] = true;
-  return solveHelper(stack, visited, maze);
+  return solveHelper(stack, visited);
 }
 
-function solveHelper(stack, visited, maze){
+function solveHelper(stack, visited){
   while (stack.length !== 0){
     var curr = stack.pop();
     var validNeighbors = noWallUnvisitedNeighbors(curr, visited);
-    // console.log(unvisited);
     if (validNeighbors.length !== 0){
       stack.push(curr);
       //Choose one of valid neighbors
@@ -330,9 +302,7 @@ function noWallUnvisitedNeighbors(cell, visited){
   // Check cell on top
   if (tempRow !== 0 && cell.style.borderTop === "0px"){
     tempId = "cell_r" + (tempRow - 1) + "_c" + tempCol;
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
-    // console.log(visited[tempRow - 1][tempCol]);
     if (!visited[tempRow - 1][tempCol]){
       validNeighbors.push(tempCell);
     }
@@ -340,7 +310,6 @@ function noWallUnvisitedNeighbors(cell, visited){
   // Check cell below
   if (tempRow !== visited.length - 1 && cell.style.borderBottom === "0px"){
     tempId = "cell_r" + (tempRow + 1) + "_c" + tempCol;
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow + 1][tempCol]){
       validNeighbors.push(tempCell);
@@ -349,7 +318,6 @@ function noWallUnvisitedNeighbors(cell, visited){
   // Check cell to left
   if (tempCol !== 0 && cell.style.borderLeft === "0px"){
     tempId = "cell_r" + tempRow + "_c" + (tempCol - 1);
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow][tempCol - 1]){
       validNeighbors.push(tempCell);
@@ -358,7 +326,6 @@ function noWallUnvisitedNeighbors(cell, visited){
   // Check cell to right
   if (tempCol !== visited[tempRow].length - 1 && cell.style.borderRight === "0px"){
     tempId = "cell_r" + tempRow + "_c" + (tempCol + 1);
-    // console.log(tempId);
     tempCell = document.getElementById(tempId);
     if (!visited[tempRow][tempCol + 1]){
       validNeighbors.push(tempCell);
@@ -368,7 +335,4 @@ function noWallUnvisitedNeighbors(cell, visited){
 }
 console.log(mazeSolver());
 
-function mazeGenRecursiveDivision(rows = defaultRows, cols = defaultCols){
-
-}
 window.onload=init;
