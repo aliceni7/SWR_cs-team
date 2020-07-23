@@ -1,7 +1,6 @@
 var avatar = document.getElementById('dot');
 var defaultRows = 8;
 var defaultCols = 8;
-var startCell, endCell;
 
 // Character creation
 var character_select = document.getElementById('character-select');
@@ -57,6 +56,7 @@ function getRandomInt(max){
 }
 
 // Determines a start and end cell and returns the maze
+var startCell, endCell;
 function makeStartEndCells(rows = defaultRows, cols = defaultCols){
   var maze = document.getElementsByTagName("tbody")[0];
   // determine start and end of maze
@@ -97,6 +97,7 @@ function makeStartEndCells(rows = defaultRows, cols = defaultCols){
   }
   startCell.classList.add("start");
   endCell.classList.add("end");
+  startCell.appendChild(avatar);
   return maze;
 }
 
