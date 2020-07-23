@@ -7,6 +7,7 @@ var cellHeight = 90;
 var cellWidth = 90;
 var ROW = 0;
 var COL = 1;
+var displayOffset = 30;
 
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext('2d');
@@ -45,16 +46,16 @@ function fillWalls(rows = defaultRows, cols = defaultCols){
       // console.log(r);
       // console.log(c);
       if (r === 0){
-        maze[r][c].borders.push('topBorder');
+        maze[r][c].borders.push('top');
       }
       if (r === maze.length - 1){
-        maze[r][c].borders.push('botBorder');
+        maze[r][c].borders.push('bot');
       }
       if (c === 0){
-        maze[r][c].borders.push('leftBorder');
+        maze[r][c].borders.push('left');
       }
       if (c === maze[r].length - 1){
-        maze[r][c].borders.push('rightBorder');
+        maze[r][c].borders.push('right');
       }
     }
   }
@@ -74,33 +75,50 @@ function drawWalls(){
   for (var r = 0; r < maze.length; r++){
     for (var c = 0; c < maze[r].length; c++){
       ctx.beginPath();
+      ctx.lineWidth = 3;
       // Draws the top border
       if (maze[r][c].walls.indexOf('top') > -1){
-        ctx.moveTo(r * cellHeight, c * cellWidth);
-        ctx.lineTo(r * cellHeight, c * cellWidth + cellWidth);
+        if (maze[r][c].borders.indexOf('top') > -1){
+          ctx.lineWidth = 8;
+        }
+        ctx.moveTo(r * cellHeight + displayOffset, c * cellWidth + displayOffset);
+        ctx.lineTo(r * cellHeight + displayOffset, c * cellWidth + cellWidth + displayOffset);
         ctx.stroke();
         ctx.beginPath();
+        ctx.lineWidth = 3;
       }
       // Draws the right border starting from top right corner
       if (maze[r][c].walls.indexOf('bot') > -1){
-        ctx.moveTo(r * cellHeight + cellHeight, c * cellWidth);
-        ctx.lineTo(r * cellHeight + cellHeight, c * cellWidth + cellWidth);
+        if (maze[r][c].borders.indexOf('bot') > -1){
+          ctx.lineWidth = 8;
+        }
+        ctx.moveTo(r * cellHeight + cellHeight + displayOffset, c * cellWidth + displayOffset);
+        ctx.lineTo(r * cellHeight + cellHeight + displayOffset, c * cellWidth + cellWidth + displayOffset);
         ctx.stroke();
         ctx.beginPath();
+        ctx.lineWidth = 3;
       }
       // Draws the left border
       if (maze[r][c].walls.indexOf('left') > -1){
-        ctx.moveTo(r * cellHeight, c * cellWidth);
-        ctx.lineTo(r * cellHeight + cellHeight, c * cellWidth);
+        if (maze[r][c].borders.indexOf('left') > -1){
+          ctx.lineWidth = 8;
+        }
+        ctx.moveTo(r * cellHeight + displayOffset, c * cellWidth + displayOffset);
+        ctx.lineTo(r * cellHeight + cellHeight + displayOffset, c * cellWidth + displayOffset);
         ctx.stroke();
         ctx.beginPath();
+        ctx.lineWidth = 3;
       }
       // Draws the right border
       if (maze[r][c].walls.indexOf('right') > -1){
-        ctx.moveTo(r * cellHeight, c * cellWidth + cellWidth);
-        ctx.lineTo(r * cellHeight + cellHeight, c * cellWidth + cellWidth);
+        if (maze[r][c].borders.indexOf('right') > -1){
+          ctx.lineWidth = 8;
+        }
+        ctx.moveTo(r * cellHeight + displayOffset, c * cellWidth + cellWidth + displayOffset);
+        ctx.lineTo(r * cellHeight + cellHeight + displayOffset, c * cellWidth + cellWidth + displayOffset);
         ctx.stroke();
         ctx.beginPath();
+        ctx.lineWidth = 3;
       }
     }
   }
@@ -108,9 +126,9 @@ function drawWalls(){
 
 function displayStartEnd(){
   ctx.fillStyle = 'rgba(20, 255, 20, 0.8)';
-  ctx.fillRect(startCell[ROW] * cellHeight, startCell[COL] * cellWidth, cellHeight, cellWidth);
+  ctx.fillRect(startCell[ROW] * cellHeight + displayOffset, startCell[COL] * cellWidth + displayOffset, cellHeight, cellWidth);
   ctx.fillStyle = 'rgba(255, 0, 20, 0.8)';
-  ctx.fillRect(endCell[ROW] * cellHeight, endCell[COL] * cellWidth, cellHeight, cellWidth);
+  ctx.fillRect(endCell[ROW] * cellHeight + displayOffset, endCell[COL] * cellWidth + displayOffset, cellHeight, cellWidth);
 }
 
 // Returns a random integer between 0 and the given maximum (noninclusive) parameter
@@ -160,8 +178,8 @@ function makeStartEndCells(rows = defaultRows, cols = defaultCols){
       maze[endCell[ROW]][endCell[COL]].walls.splice(tempIdx, 1);
       break;
   }
-  console.log(startCell);
-  console.log(endCell);
+  // console.log(startCell);
+  // console.log(endCell);
 }
 
 /* Pseudocode
@@ -309,7 +327,7 @@ function solveHelper(stack, visited, maze){
   while (stack.length !== 0){
     var curr = stack.pop();
     var validNeighbors = noWallUnvisitedNeighbors(curr, visited);
-    console.log(validNeighbors);
+    // console.log(validNeighbors);
     if (validNeighbors.length !== 0){
       stack.push(curr);
       //Choose one of valid neighbors
