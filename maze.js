@@ -108,13 +108,13 @@ function init() {
 
 function dotheneedful(sibling) {
     if (sibling != null) {
-	startCell.focus();
-	sibling.focus();
-	startCell = sibling;
-	//console.log(sibling);
-	sibling.style.transition = "all 2s";
-	sibling.appendChild(avatar);
-	//avatar.style.background = '#' + Math.floor(Math.random()*16777215).toString(16);;
+    	startCell.focus();
+    	sibling.focus();
+    	startCell = sibling;
+    	//console.log(sibling);
+    	sibling.style.transition = "all 2s";
+    	sibling.appendChild(avatar);
+    	//avatar.style.background = '#' + Math.floor(Math.random()*16777215).toString(16);;
     }
 }
 
@@ -142,7 +142,7 @@ function getKeyAndMove(e){
       	e.preventDefault();
       	//moveLeft();
       	break;
-          case 38: //Up arrow key
+    case 38: //Up arrow key
       	e.preventDefault();
       	var idx = startCell.cellIndex;
       	var nextrow = startCell.parentElement.previousElementSibling;
@@ -155,7 +155,7 @@ function getKeyAndMove(e){
       	}
       	//moveUp();
       	break;
-          case 39: //right arrow key
+    case 39: //right arrow key
       	e.preventDefault();
       	if (startCell.style.borderRight === '') break;
       	var sibling = startCell.nextElementSibling;
@@ -163,7 +163,7 @@ function getKeyAndMove(e){
       	dotheneedful(sibling);
       	//moveRight();
       	break;
-          case 40: //down arrow key
+    case 40: //down arrow key
       	if (startCell.style.borderBottom === '') break;
       	var idx = startCell.cellIndex;
       	var nextrow = startCell.parentElement.nextElementSibling;
