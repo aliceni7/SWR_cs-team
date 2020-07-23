@@ -3,11 +3,13 @@ var defaultRows = 8;
 var defaultCols = 8;
 var maze = []; //will be a 2d array of "cells" containing info about walls
 var startCell, endCell;
+var cellHeight = 90;
+var cellWidth = 90;
 var ROW = 0;
 var COL = 1;
 
 var canvas = document.querySelector('canvas');
-var c = canvas.getContext('2d');
+var ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -15,8 +17,9 @@ function init(){
   makeBlankMaze();
   mazeGenBacktracking();
   drawWalls();
+  displayStartEnd();
   console.log(maze);
-  // console.log(mazeSolver());
+  console.log(mazeSolver());
 }
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
@@ -60,7 +63,54 @@ function fillWalls(rows = defaultRows, cols = defaultCols){
 
 // Draws the walls on the canvas
 function drawWalls(){
+  /* Coordinates for a cell
+    top left corner: (r * cellHeight, c * cellWidth)
+    top right corner: (r * cellHeight, c * cellWidth + cellWidth)
+    bot left corner: (r * cellHeight + cellHeight, c * cellWidth)
+    bot right corner: (r * cellHeight + cellHeight, c * cellWidth + cellWidth)
+  */
+  var rows = maze.length;
+  var cols = maze[0].length;
+  for (var r = 0; r < maze.length; r++){
+    for (var c = 0; c < maze[r].length; c++){
+      ctx.beginPath();
+      // Draws the top border
+      if (maze[r][c].walls.indexOf('top') > -1){
+        ctx.moveTo(r * cellHeight, c * cellWidth);
+        ctx.lineTo(r * cellHeight, c * cellWidth + cellWidth);
+        ctx.stroke();
+        ctx.beginPath();
+      }
+      // Draws the right border starting from top right corner
+      if (maze[r][c].walls.indexOf('bot') > -1){
+        ctx.moveTo(r * cellHeight + cellHeight, c * cellWidth);
+        ctx.lineTo(r * cellHeight + cellHeight, c * cellWidth + cellWidth);
+        ctx.stroke();
+        ctx.beginPath();
+      }
+      // Draws the left border
+      if (maze[r][c].walls.indexOf('left') > -1){
+        ctx.moveTo(r * cellHeight, c * cellWidth);
+        ctx.lineTo(r * cellHeight + cellHeight, c * cellWidth);
+        ctx.stroke();
+        ctx.beginPath();
+      }
+      // Draws the right border
+      if (maze[r][c].walls.indexOf('right') > -1){
+        ctx.moveTo(r * cellHeight, c * cellWidth + cellWidth);
+        ctx.lineTo(r * cellHeight + cellHeight, c * cellWidth + cellWidth);
+        ctx.stroke();
+        ctx.beginPath();
+      }
+    }
+  }
+}
 
+function displayStartEnd(){
+  ctx.fillStyle = 'rgba(20, 255, 20, 0.8)';
+  ctx.fillRect(startCell[ROW] * cellHeight, startCell[COL] * cellWidth, cellHeight, cellWidth);
+  ctx.fillStyle = 'rgba(255, 0, 20, 0.8)';
+  ctx.fillRect(endCell[ROW] * cellHeight, endCell[COL] * cellWidth, cellHeight, cellWidth);
 }
 
 // Returns a random integer between 0 and the given maximum (noninclusive) parameter
@@ -259,7 +309,7 @@ function solveHelper(stack, visited, maze){
   while (stack.length !== 0){
     var curr = stack.pop();
     var validNeighbors = noWallUnvisitedNeighbors(curr, visited);
-    // console.log(unvisited);
+    console.log(validNeighbors);
     if (validNeighbors.length !== 0){
       stack.push(curr);
       //Choose one of valid neighbors
@@ -279,31 +329,28 @@ function noWallUnvisitedNeighbors(cell, visited){
   var currRow = cell[ROW];
   var currCol = cell[COL];
   // Check cell on top
-  if (currRow !== 0 && !maze[currRow][currCol].walls.indexOf('top')){
-    tempId = "cell_r" + (currRow - 1) + "_c" + currCol;
-    // console.log(tempId);
+  if (currRow !== 0 && maze[currRow][currCol].walls.indexOf('top') === -1){
     tempCell = [currRow - 1, currCol];
-    // console.log(visited[currRow - 1][currCol]);
     if (!visited[currRow - 1][currCol]){
       validNeighbors.push(tempCell);
     }
   }
   // Check cell below
-  if (currRow !== visited.length - 1 && !maze[currRow][currCol].walls.indexOf('bot')){
+  if (currRow !== visited.length - 1 && maze[currRow][currCol].walls.indexOf('bot') === -1){
     tempCell = [currRow + 1, currCol];
     if (!visited[currRow + 1][currCol]){
       validNeighbors.push(tempCell);
     }
   }
   // Check cell to left
-  if (currCol !== 0 && !maze[currRow][currCol].walls.indexOf('left')){
+  if (currCol !== 0 && maze[currRow][currCol].walls.indexOf('left') === -1){
     tempCell = [currRow, currCol - 1];
     if (!visited[currRow][currCol - 1]){
       validNeighbors.push(tempCell);
     }
   }
   // Check cell to right
-  if (currCol !== visited[currRow].length - 1 && !maze[currRow][currCol].walls.indexOf('right')){
+  if (currCol !== visited[currRow].length - 1 && maze[currRow][currCol].walls.indexOf('right') === -1){
     tempCell = [currRow, currCol + 1];
     if (!visited[currRow][currCol + 1]){
       validNeighbors.push(tempCell);
@@ -311,5 +358,6 @@ function noWallUnvisitedNeighbors(cell, visited){
   }
   return validNeighbors;
 }
+
 
 init();
