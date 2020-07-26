@@ -4,10 +4,10 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 // Global variables
-var defaultRows = 8;
-var defaultCols = 8;
-var mazeRows = 8
-var mazeCols = 8;
+var defaultRows = 10;
+var defaultCols = 10;
+var mazeRows = 10;
+var mazeCols = 10;
 var maze = []; //will be a 2d array of "cells" containing info about walls
 var startCell, endCell;
 var cellWidth = canvas.width / (mazeCols + 1);
