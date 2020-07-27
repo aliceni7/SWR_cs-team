@@ -48,11 +48,12 @@ function resizeMaze() {
 
 var form = document.querySelector('form');
 form.onsubmit = function () {
-  mazeRows = parseInt(form.maze_rows.value);
-  mazeCols = parseInt(form.maze_cols.value);
-  generateMaze(mazeRows, mazeCols);
-  resizeMaze();
-  return false;
+    mazeRows = parseInt(form.maze_rows.value);
+    mazeCols = parseInt(form.maze_cols.value);
+    generateMaze(mazeRows, mazeCols);
+    resizeMaze();
+    avatarPosition(startCell[ROW] * cellHeight + 50, startCell[COL] * cellWidth + 45); //positions avatar at the start cell
+    return false;
 };
 
 function generateMaze(r = defaultRows, c = defaultCols) {
@@ -66,7 +67,7 @@ function generateMaze(r = defaultRows, c = defaultCols) {
     avatarPosition(startCell[ROW] * cellHeight + 50, startCell[COL] * cellWidth + 45); //positions avatar at the start cell
     getWallPosition(maze);
     gameLoop(); 
-  console.log(mazeSolver(r, c));
+    //console.log(mazeSolver(r, c));
 }
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
@@ -487,9 +488,6 @@ function getWallPosition(maze) {
 
 
 //Returns an array containing the cells in sequential order from start to end making up the path through the maze
-function mazeSolver(rows = defaultRows, cols = defaultCols){
-/* Returns an array containing the cells in sequential order from start to end
-   making up the path through the maze */
 function mazeSolver(rows = defaultRows, cols = defaultCols) {
   var stack = [];
   var visited = makeArray(rows, cols, false);
