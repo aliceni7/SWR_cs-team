@@ -9,10 +9,14 @@ var ROW = 0;
 var COL = 1;
 var displayOffset = 30;
 
-var canvas = document.querySelector('canvas');
+//var canvas = document.querySelector('canvas');
+var canvas = document.getElementById("canvas1", { alpha: false });
+var canvas2 = document.getElementById("canvas2", { alpha: false });
 var ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+//canvas2.width = 700;//window.innerWidth;
+//canvas2.height = 1000;//window.innerHeight;
 
 // var button = document.getElementById("generate_maze");
 var form = document.querySelector("form");
@@ -27,12 +31,17 @@ form.onsubmit = function(){
 }
 
 function generateMaze(r = defaultRows, c = defaultCols) {
-  ctx.clearRect(0, 0, innerWidth, innerHeight);
-  makeBlankMaze(r, c);
-  mazeGenBacktracking(r, c);
-  drawWalls();
-  displayStartEnd();
-  console.log(mazeSolver(r, c));
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    makeBlankMaze(r, c);
+    mazeGenBacktracking(r, c);
+    drawWalls();
+    displayStartEnd();
+    //console.log(mazeSolver(r, c));
+    console.log(maze);
+    avatarPosition(startCell[ROW] * cellHeight + 50, startCell[COL] * cellWidth + 45); //positions avatar at the start cell
+    getWallPosition(maze);
+    gameLoop();
+    
 }
 
 
@@ -146,6 +155,7 @@ function getRandomInt(max){
   return Math.floor(Math.random() * Math.floor(max));
 }
 
+var startCell, endCell;
 // Determines startCell and endCell
 function makeStartEndCells(rows = defaultRows, cols = defaultCols){
   var mazeOrient = getRandomInt(4);
@@ -314,6 +324,114 @@ function unvisitedNeighbors(cell, visited){
   }
   return unvisited;
 }
+
+
+(function () {
+    var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    window.requestAnimationFrame = requestAnimationFrame;
+})();
+
+window.addEventListener("keydown", function (e) {
+    e.preventDefault();
+    keys[e.keyCode] = true;
+});
+
+window.addEventListener("keyup", function (e) {
+    velX = 0;
+    velY = 0;
+    keys[e.keyCode] = false;
+});
+
+var avatarX = 400,
+    avatarY = 300,
+    velX = 0,
+    velY = 0,
+    keys = [],
+    maxSpeed = 4;
+
+function avatarPosition(a,b) {
+    avatarX = a;
+    avatarY = b;
+}
+
+function gameLoop() {
+    whatKey();
+    var canvas2 = document.getElementById("canvas2");
+    var ctx2 = canvas2.getContext("2d");
+    canvas2.width = window.innerWidth;
+    canvas2.height = window.innerHeight;
+
+    avatarX += velX;
+    avatarY += velY;
+
+    ctx2.fillRect(avatarX, avatarY, 50, 50);
+    requestAnimationFrame(gameLoop);
+    
+}
+
+function whatKey() {
+    if (keys[37]) {
+	//velX = -4;  left key
+	if (avatarX < 0) {
+	    velX = 0;
+	    velY = 0;
+	}
+	else if (velX > -maxSpeed) {
+	    velX -= 1;
+	}
+    }
+
+    if (keys[39]) {
+	//velX = 4;  right key
+	if (avatarX > canvas.width - 50) {
+	    velX = 0;
+	    velY = 0;
+	}
+	else if (velX < maxSpeed) {
+	    velX += 1;
+	}
+    }
+    if (keys[40]) {
+	//velY = 4;  down key
+	if (avatarY > canvas.height - 50) {
+	    velX = 0;
+	    velY = 0;
+	}
+	else if (velY < maxSpeed) {
+	    velY += 1;
+	}
+    }
+    if (keys[38]) {
+	//velY = 4;  up key
+	if (avatarY < 0) {
+	    velX = 0;
+	    velY = 0;
+	}
+	else if (velY > -maxSpeed) {
+	    velY -= 1;
+	}
+    }
+}
+
+function getWallPosition(maze) {
+    //console.log(maze);
+    var ans = [];
+    for (i = 0; i < form["maze_cols"].value; i++){
+	//console.log(maze[i]);
+	var cell = maze[i];
+	for (j = 0; j < form["maze_rows"].value; j++){
+	    //console.log(cell[j]);
+	    var walls = cell[j]['walls'];
+	    //console.log(walls);
+	    ans.push(walls);
+	}
+    }
+    console.log(ans);
+
+}
+
+
+
 
 
 //Returns an array containing the cells in sequential order from start to end making up the path through the maze
