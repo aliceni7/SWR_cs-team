@@ -17,8 +17,8 @@ var startCell;
 var endCell;
 var cellWidth = canvas.width / (mazeCols + 1);
 var cellHeight = canvas.height / (mazeRows + 1);
-var ROW = 1;
 var COL = 0;
+var ROW = 1;
 var widthOffset = cellWidth / 2;
 var heightOffset = cellHeight / 2;
 
@@ -41,19 +41,17 @@ form.onsubmit = function () {
   mazeCols = parseInt(form.maze_cols.value);
   generateMaze(mazeRows, mazeCols);
   resizeMaze();
-  avatarPosition(startCell[ROW] * cellHeight + 50, startCell[COL] * cellWidth + 45); //positions avatar at the start cell
+  avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50); //positions avatar at the start cell
   return false;
 };
 
 function generateMaze(r = defaultRows, c = defaultCols) {
-  ctx.clearRect(0, 0, innerWidth, innerHeight);
   makeBlankMaze(r, c);
   mazeGenBacktracking(r, c);
-  drawWalls();
-  displayStartEnd();
+  drawMaze();
   //console.log(mazeSolver(r, c));
   console.log(maze);
-  avatarPosition(startCell[ROW] * cellHeight + 50, startCell[COL] * cellWidth + 45); //positions avatar at the start cell
+  avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50); //positions avatar at the start cell
   getWallPosition(maze);
   gameLoop();
   //console.log(mazeSolver(r, c));
