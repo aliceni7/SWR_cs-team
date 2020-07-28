@@ -35,6 +35,11 @@ function resizeMaze() {
   drawMaze();
 }
 
+function init() {
+  generateMaze();
+  gameLoop();
+}
+
 var form = document.querySelector('form');
 form.onsubmit = function () {
   mazeRows = parseInt(form.maze_rows.value);
@@ -53,7 +58,7 @@ function generateMaze(r = defaultRows, c = defaultCols) {
   console.log(maze);
   avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50); //positions avatar at the start cell
   getWallPosition(maze);
-  gameLoop();
+
   //console.log(mazeSolver(r, c));
 }
 
@@ -407,7 +412,6 @@ function gameLoop() {
 
   ctx2.fillRect(avatarX, avatarY, 50, 50);
   requestAnimationFrame(gameLoop);
-
 }
 
 function whatKey() {
@@ -539,4 +543,4 @@ function noWallUnvisitedNeighbors(cell, visited) {
   return validNeighbors;
 }
 
-generateMaze();
+init();
