@@ -41,6 +41,7 @@ form.onsubmit = function () {
   mazeCols = parseInt(form.maze_cols.value);
   generateMaze(mazeRows, mazeCols);
   resizeMaze();
+  avatarPosition(startCell[ROW] * cellHeight + 50, startCell[COL] * cellWidth + 45); //positions avatar at the start cell
   return false;
 };
 
@@ -55,7 +56,7 @@ function generateMaze(r = defaultRows, c = defaultCols) {
   avatarPosition(startCell[ROW] * cellHeight + 50, startCell[COL] * cellWidth + 45); //positions avatar at the start cell
   getWallPosition(maze);
   gameLoop();
-  console.log(mazeSolver(r, c));
+  //console.log(mazeSolver(r, c));
 }
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
@@ -369,18 +370,20 @@ function unvisitedNeighbors(cell, visited) {
 (function () {
     var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
     window.requestAnimationFrame = requestAnimationFrame;
-})();
+  })();
 
-window.addEventListener("keydown", function (e) {
+window.addEventListener('keydown', function (e) {
     e.preventDefault();
     keys[e.keyCode] = true;
-});
+  }
+);
 
-window.addEventListener("keyup", function (e) {
+window.addEventListener('keyup', function (e) {
     velX = 0;
     velY = 0;
     keys[e.keyCode] = false;
-});
+  }
+);
 
 var avatarX = 400,
     avatarY = 300,
@@ -390,86 +393,84 @@ var avatarX = 400,
     maxSpeed = 4;
 
 function avatarPosition(a, b) {
-    avatarX = a;
-    avatarY = b;
+  avatarX = a;
+  avatarY = b;
 }
 
 function gameLoop() {
-    whatKey();
-    var canvas2 = document.getElementById("canvas2");
-    var ctx2 = canvas2.getContext("2d");
-    canvas2.width = window.innerWidth;
-    canvas2.height = window.innerHeight;
+  whatKey();
+  var canvas2 = document.getElementById('canvas2');
+  var ctx2 = canvas2.getContext('2d');
+  canvas2.width = window.innerWidth;
+  canvas2.height = window.innerHeight;
 
-    avatarX += velX;
-    avatarY += velY;
+  avatarX += velX;
+  avatarY += velY;
 
-    ctx2.fillRect(avatarX, avatarY, 50, 50);
-    requestAnimationFrame(gameLoop);
+  ctx2.fillRect(avatarX, avatarY, 50, 50);
+  requestAnimationFrame(gameLoop);
 
 }
 
 function whatKey() {
-    if (keys[37]) {
-	//velX = -4;  left key
-	if (avatarX < 0) {
-	    velX = 0;
-	    velY = 0;
-	}
-	else if (velX > -maxSpeed) {
-	    velX -= 1;
-	}
-    }
+  if (keys[37]) {
 
-    if (keys[39]) {
-	//velX = 4;  right key
-	if (avatarX > canvas.width - 50) {
-	    velX = 0;
-	    velY = 0;
-	}
-	else if (velX < maxSpeed) {
-	    velX += 1;
-	}
+    //velX = -4;  left key
+    if (avatarX < 0) {
+      velX = 0;
+      velY = 0;
+    } else if (velX > -maxSpeed) {
+      velX -= 1;
     }
-    if (keys[40]) {
-	//velY = 4;  down key
-	if (avatarY > canvas.height - 50) {
-	    velX = 0;
-	    velY = 0;
-	}
-	else if (velY < maxSpeed) {
-	    velY += 1;
-	}
+  }
+
+  if (keys[39]) {
+    //velX = 4;  right key
+    if (avatarX > canvas.width - 50) {
+      velX = 0;
+      velY = 0;
+    } else if (velX < maxSpeed) {
+      velX += 1;
     }
-    if (keys[38]) {
-	//velY = 4;  up key
-	if (avatarY < 0) {
-	    velX = 0;
-	    velY = 0;
-	}
-	else if (velY > -maxSpeed) {
-	    velY -= 1;
-	}
+  }
+
+  if (keys[40]) {
+    //velY = 4;  down key
+    if (avatarY > canvas.height - 50) {
+      velX = 0;
+      velY = 0;
+    } else if (velY < maxSpeed) {
+      velY += 1;
     }
+  }
+
+  if (keys[38]) {
+    //velY = 4;  up key
+    if (avatarY < 0) {
+      velX = 0;
+      velY = 0;
+    } else if (velY > -maxSpeed) {
+      velY -= 1;
+    }
+  }
 }
 
 function getWallPosition(maze) {
-    //console.log(maze);
+  //console.log(maze);
   var ans = [];
-  for (i = 0; i < form.maze_cols.value; i++){
-	//console.log(maze[i]);
-  	var cell = maze[i];
-  	for (j = 0; j < form.maze_rows.value; j++){
-	    //console.log(cell[j]);
-	    var walls = cell[j].walls;
-	    //console.log(walls);
-	    ans.push(walls);
-  	}
+  for (i = 0; i < form.maze_cols.value; i++) {
+    //console.log(maze[i]);
+    var cell = maze[i];
+    for (j = 0; j < form.maze_rows.value; j++) {
+      //console.log(cell[j]);
+      var walls = cell[j].walls;
+      //console.log(walls);
+      ans.push(walls);
+    }
   }
-    console.log(ans);
 
+  console.log(ans);
 }
-
 
 /* Returns an array containing the cells in sequential order from start to end
    making up the path through the maze */
