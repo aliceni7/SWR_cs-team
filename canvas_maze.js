@@ -1,20 +1,9 @@
-// Global variables
-var defaultRows = 8;
-var defaultCols = 8;
-var maze = []; //will be a 2d array of "cells" containing info about walls
-var startCell, endCell;
-var cellHeight = 90;
-var cellWidth = 90;
-var ROW = 0;
-var COL = 1;
-var displayOffset = 30;
-
-//var canvas = document.querySelector('canvas');
-var canvas = document.getElementById("canvas1", { alpha: false });
-var canvas2 = document.getElementById("canvas2", { alpha: false });
+var canvas = document.getElementById('canvas1', { alpha: false });
+var canvas2 = document.getElementById('canvas2', { alpha: false });
 var ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+
 //canvas2.width = 700;//window.innerWidth;
 //canvas2.height = 1000;//window.innerHeight;
 
@@ -56,16 +45,16 @@ form.onsubmit = function () {
 };
 
 function generateMaze(r = defaultRows, c = defaultCols) {
-    ctx.clearRect(0, 0, innerWidth, innerHeight);
-    makeBlankMaze(r, c);
-    mazeGenBacktracking(r, c);
-    drawWalls();
-    displayStartEnd();
-    //console.log(mazeSolver(r, c));
-    console.log(maze);
-    avatarPosition(startCell[ROW] * cellHeight + 50, startCell[COL] * cellWidth + 45); //positions avatar at the start cell
-    getWallPosition(maze);
-    gameLoop(); 
+  ctx.clearRect(0, 0, innerWidth, innerHeight);
+  makeBlankMaze(r, c);
+  mazeGenBacktracking(r, c);
+  drawWalls();
+  displayStartEnd();
+  //console.log(mazeSolver(r, c));
+  console.log(maze);
+  avatarPosition(startCell[ROW] * cellHeight + 50, startCell[COL] * cellWidth + 45); //positions avatar at the start cell
+  getWallPosition(maze);
+  gameLoop();
   console.log(mazeSolver(r, c));
 }
 
@@ -198,7 +187,6 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-var startCell, endCell;
 // Determines startCell and endCell
 function makeStartEndCells(rows = defaultRows, cols = defaultCols) {
   var mazeOrient = getRandomInt(4);
@@ -401,7 +389,7 @@ var avatarX = 400,
     keys = [],
     maxSpeed = 4;
 
-function avatarPosition(a,b) {
+function avatarPosition(a, b) {
     avatarX = a;
     avatarY = b;
 }
@@ -418,7 +406,7 @@ function gameLoop() {
 
     ctx2.fillRect(avatarX, avatarY, 50, 50);
     requestAnimationFrame(gameLoop);
-    
+
 }
 
 function whatKey() {
@@ -467,27 +455,22 @@ function whatKey() {
 
 function getWallPosition(maze) {
     //console.log(maze);
-    var ans = [];
-    for (i = 0; i < form["maze_cols"].value; i++){
+  var ans = [];
+  for (i = 0; i < form.maze_cols.value; i++){
 	//console.log(maze[i]);
-	var cell = maze[i];
-	for (j = 0; j < form["maze_rows"].value; j++){
+  	var cell = maze[i];
+  	for (j = 0; j < form.maze_rows.value; j++){
 	    //console.log(cell[j]);
-	    var walls = cell[j]['walls'];
+	    var walls = cell[j].walls;
 	    //console.log(walls);
 	    ans.push(walls);
-	}
-    }
+  	}
+  }
     console.log(ans);
 
 }
 
 
-
-
-
-//Returns an array containing the cells in sequential order from start to end making up the path through the maze
-function mazeSolver(rows = defaultRows, cols = defaultCols){
 /* Returns an array containing the cells in sequential order from start to end
    making up the path through the maze */
 function mazeSolver(rows = defaultRows, cols = defaultCols) {
