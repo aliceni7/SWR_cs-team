@@ -21,6 +21,8 @@ var COL = 0;
 var ROW = 1;
 var widthOffset = cellWidth / 2;
 var heightOffset = cellHeight / 2;
+var wallThickness = 3;
+var borderThickness = 8;
 
 /* Window Resizing */
 window.addEventListener('resize', resizeMaze);
@@ -131,58 +133,58 @@ function drawWalls() {
     for (var r = 0; r < maze[c].length; r++) {
       var topLeft = [c * cellWidth, r * cellHeight];
       ctx.beginPath();
-      ctx.lineWidth = 3;
+      ctx.lineWidth = wallThickness;
 
       // Draws the top border
       if (maze[c][r].walls.indexOf('top') > -1) {
         if (maze[c][r].borders.indexOf('top') > -1) {
-          ctx.lineWidth = 8;
+          ctx.lineWidth = borderThickness;
         }
 
         ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset);
         ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset);
         ctx.stroke();
         ctx.beginPath();
-        ctx.lineWidth = 3;
+        ctx.lineWidth = wallThickness;
       }
 
       // Draws the right border starting from top right corner
       if (maze[c][r].walls.indexOf('bot') > -1) {
         if (maze[c][r].borders.indexOf('bot') > -1) {
-          ctx.lineWidth = 8;
+          ctx.lineWidth = borderThickness;
         }
 
         ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset);
         ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset);
         ctx.stroke();
         ctx.beginPath();
-        ctx.lineWidth = 3;
+        ctx.lineWidth = wallThickness;
       }
 
       // Draws the left border
       if (maze[c][r].walls.indexOf('left') > -1) {
         if (maze[c][r].borders.indexOf('left') > -1) {
-          ctx.lineWidth = 8;
+          ctx.lineWidth = borderThickness;
         }
 
         ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset);
         ctx.lineTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset);
         ctx.stroke();
         ctx.beginPath();
-        ctx.lineWidth = 3;
+        ctx.lineWidth = wallThickness;
       }
 
       // Draws the right border
       if (maze[c][r].walls.indexOf('right') > -1) {
         if (maze[c][r].borders.indexOf('right') > -1) {
-          ctx.lineWidth = 8;
+          ctx.lineWidth = borderThickness;
         }
 
         ctx.moveTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset);
         ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset);
         ctx.stroke();
         ctx.beginPath();
-        ctx.lineWidth = 3;
+        ctx.lineWidth = wallThickness;
       }
     }
   }
