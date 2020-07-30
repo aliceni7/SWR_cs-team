@@ -45,9 +45,7 @@ function resizeMaze() {
 function init() {
   generateMaze();
   gameLoop();
-  canvas.addEventListener('click', function (e) { getCursorPosition(canvas, e); }, false);
   canvas2.addEventListener('click', function (e) { getCursorPosition(canvas, e); }, false);
-  //canvas2.addEventListener('click', function() { console.log("hi"); }, false);
 }
 
 var form = document.querySelector('form');
@@ -66,13 +64,11 @@ function generateMaze(r = defaultRows, c = defaultCols) {
   makeBlankMaze(r, c);
   mazeGenBacktracking(r, c);
   drawMaze();
-  console.log(maze);
+  console.log(mazeSolver(r, c));
 
+  //console.log(maze);
   //positions avatar at the start cell
   avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50);
-  getWallPosition(maze);
-
-  //console.log(mazeSolver(r, c));
 }
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
@@ -516,24 +512,6 @@ function whatKey() {
       velY -= 1.0;
     }
   }
-}
-
-function getWallPosition(maze) {
-  //console.log(maze);
-  var ans = [];
-  for (i = 0; i < form.maze_cols.value; i++) {
-    //console.log(maze[i]);
-    var cell = maze[i];
-    for (j = 0; j < form.maze_rows.value; j++) {
-      //console.log(cell[j]);
-      var walls = cell[j].walls;
-
-      //console.log(walls);
-      ans.push(walls);
-    }
-  }
-
-  console.log(ans);
 }
 
 /* Returns an array containing the cells in sequential order from start to end
