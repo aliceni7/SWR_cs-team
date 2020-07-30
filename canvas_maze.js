@@ -58,7 +58,7 @@ form.onsubmit = function () {
     resizeMaze();
 
     //positions avatar at the start cell
-    avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50);
+    avatarPosition(startCell[COL] * cellWidth + cellWidth / 2, startCell[ROW] * cellHeight + cellHeight / 2 + 2);
     return false;
 };
 
@@ -457,7 +457,7 @@ function checkEquality(pix) {
 function whatKey() {
     if (keys[37]) {
 	const leftSide = [];
-	for (i = 8; i < avatarWidth - 12; i++) {
+	for (i = 8; i < avatarHeight - 8; i++) {
 	    leftSide.push(canvas.getContext('2d').getImageData(avatarX, avatarY+i, 1, 1).data)
 	}
 	//velX = -4;  left key
@@ -472,7 +472,7 @@ function whatKey() {
     if (keys[39]) {
 	//velX = 4;  right key
 	const rightSide = [];
-	for (i = 8; i < avatarWidth - 12; i++) {
+	for (i = 8; i < avatarHeight - 8; i++) {
 	    rightSide.push(canvas.getContext('2d').getImageData(avatarX+avatarWidth, avatarY+i, 1, 1).data)
 	}
 	console.log(rightSide);
@@ -486,7 +486,7 @@ function whatKey() {
     if (keys[40]) {
 	//velY = 4;  down key	
 	const bottomSide = [];
-	for (i = 8; i < avatarHeight - 12; i++) {
+	for (i = 8; i < avatarWidth - 12; i++) {
 	    bottomSide.push(canvas.getContext('2d').getImageData(avatarX+i, avatarY+avatarHeight, 1, 1).data)
 	}
 	if (avatarY > canvas.height - avatarHeight || checkEquality(bottomSide)) {
@@ -500,7 +500,7 @@ function whatKey() {
     if (keys[38]) {
 	//velY = 4;  up key
 	const topSide = [];
-	for (i = 8; i < avatarHeight - 12; i++) {
+	for (i = 8; i < avatarWidth - 12; i++) {
 	    topSide.push(canvas.getContext('2d').getImageData(avatarX+i, avatarY, 1, 1).data)
 	}
 	if (avatarY < 0 || checkEquality(topSide)) {
