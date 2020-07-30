@@ -4,9 +4,6 @@ var ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-//canvas2.width = 700;//window.innerWidth;
-//canvas2.height = 1000;//window.innerHeight;
-
 // Global variables
 var defaultRows = 10;
 var defaultCols = 10;
@@ -17,6 +14,8 @@ var startCell;
 var endCell;
 var cellWidth = canvas.width / (mazeCols + 1);
 var cellHeight = canvas.height / (mazeRows + 1);
+var avatarWidth = parseInt(cellWidth * .8);
+var avatarHeight = parseInt(cellHeight * .8);
 var COL = 0;
 var ROW = 1;
 var widthOffset = cellWidth / 2;
@@ -40,6 +39,9 @@ function resizeMaze() {
     cellHeight = canvas.height / (mazeRows + 1);
     widthOffset = cellWidth / 2;
     heightOffset = cellHeight / 2;
+    console.log(cellHeight * .8);
+    avatarWidth = parseInt(cellWidth * .8);
+    avatarHeight = parseInt(cellHeight * .8);
     drawMaze();
 }
 
@@ -128,58 +130,58 @@ function drawWalls() {
 	for (var r = 0; r < maze[c].length; r++) {
 	    var topLeft = [c * cellWidth, r * cellHeight];
 	    ctx.beginPath();
-	    ctx.lineWidth = 5;
+	    ctx.lineWidth = 8;
 
 	    // Draws the top border
 	    if (maze[c][r].walls.indexOf('top') > -1) {
 		if (maze[c][r].borders.indexOf('top') > -1) {
-		    ctx.lineWidth = 8;
+		    ctx.lineWidth = 10;
 		}
 
 		ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset);
 		ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.lineWidth = 5;
+		ctx.lineWidth = 8;
 	    }
 
 	    // Draws the right border starting from top right corner
 	    if (maze[c][r].walls.indexOf('bot') > -1) {
 		if (maze[c][r].borders.indexOf('bot') > -1) {
-		    ctx.lineWidth = 8;
+		    ctx.lineWidth = 10;
 		}
 
 		ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset);
 		ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.lineWidth = 5;
+		ctx.lineWidth = 8;
 	    }
 
 	    // Draws the left border
 	    if (maze[c][r].walls.indexOf('left') > -1) {
 		if (maze[c][r].borders.indexOf('left') > -1) {
-		    ctx.lineWidth = 8;
+		    ctx.lineWidth = 10;
 		}
 
 		ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset);
 		ctx.lineTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.lineWidth = 5;
+		ctx.lineWidth = 8;
 	    }
 
 	    // Draws the right border
 	    if (maze[c][r].walls.indexOf('right') > -1) {
 		if (maze[c][r].borders.indexOf('right') > -1) {
-		    ctx.lineWidth = 8;
+		    ctx.lineWidth = 10;
 		}
 
 		ctx.moveTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset);
 		ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.lineWidth = 5;
+		ctx.lineWidth = 8;
 	    }
 	}
     }
@@ -419,7 +421,7 @@ function gameLoop() {
     Math.round(avatarY);
     //console.log(Math.round(avatarX), avatarY);
 
-    ctx2.fillRect(avatarX, avatarY, 50, 50);
+    ctx2.fillRect(avatarX, avatarY, avatarWidth, avatarHeight);
     requestAnimationFrame(gameLoop);
 }
 
@@ -449,7 +451,7 @@ function checkEquality(pix) {
 function whatKey() {
     if (keys[37]) {
 	const leftSide = [];
-	for (i = 5; i < 45; i++) {
+	for (i = 8; i < avatarWidth - 12; i++) {
 	    leftSide.push(canvas.getContext('2d').getImageData(avatarX, avatarY+i, 1, 1).data)
 	}
 	//velX = -4;  left key
@@ -464,10 +466,11 @@ function whatKey() {
     if (keys[39]) {
 	//velX = 4;  right key
 	const rightSide = [];
-	for (i = 5; i < 45; i++) {
-	    rightSide.push(canvas.getContext('2d').getImageData(avatarX+50, avatarY+i, 1, 1).data)
+	for (i = 8; i < avatarWidth - 12; i++) {
+	    rightSide.push(canvas.getContext('2d').getImageData(avatarX+avatarWidth, avatarY+i, 1, 1).data)
 	}
-	if (avatarX > canvas.width - 50 || checkEquality(rightSide)) {
+	console.log(rightSide);
+	if (avatarX > canvas.width - avatarWidth || checkEquality(rightSide)) {
 	    velX = 0;
 	    velY = 0;
 	} else if (velX < maxSpeed) {
@@ -478,10 +481,10 @@ function whatKey() {
     if (keys[40]) {
 	//velY = 4;  down key	
 	const bottomSide = [];
-	for (i = 5; i < 45; i++) {
-	    bottomSide.push(canvas.getContext('2d').getImageData(avatarX+i, avatarY+50, 1, 1).data)
+	for (i = 8; i < avatarHeight - 12; i++) {
+	    bottomSide.push(canvas.getContext('2d').getImageData(avatarX+i, avatarY+avatarHeight, 1, 1).data)
 	}
-	if (avatarY > canvas.height - 50 || checkEquality(bottomSide)) {
+	if (avatarY > canvas.height - avatarHeight || checkEquality(bottomSide)) {
 	    velX = 0;
 	    velY = 0;
 	} else if (velY < maxSpeed) {
@@ -492,7 +495,7 @@ function whatKey() {
     if (keys[38]) {
 	//velY = 4;  up key
 	const topSide = [];
-	for (i = 5; i < 45; i++) {
+	for (i = 8; i < avatarHeight - 12; i++) {
 	    topSide.push(canvas.getContext('2d').getImageData(avatarX+i, avatarY, 1, 1).data)
 	}
 	if (avatarY < 0 || checkEquality(topSide)) {
