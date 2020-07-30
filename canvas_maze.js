@@ -24,12 +24,11 @@ var heightOffset = cellHeight / 2;
 /* Window Resizing */
 window.addEventListener('resize', resizeMaze);
 
-
 function getCursorPosition(canvas, event) {
-    const rect = canvas.getBoundingClientRect()
-    const x = event.clientX - rect.left
-    const y = event.clientY - rect.top
-    console.log("x: " + x + " y: " + y)
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    console.log('x: ' + x + ' y: ' + y);
 }
 
 function resizeMaze() {
@@ -39,7 +38,7 @@ function resizeMaze() {
     cellHeight = canvas.height / (mazeRows + 1);
     widthOffset = cellWidth / 2;
     heightOffset = cellHeight / 2;
-    console.log(cellHeight * .8);
+    //console.log(cellHeight * .8);
     avatarWidth = parseInt(cellWidth * .8);
     avatarHeight = parseInt(cellHeight * .8);
     drawMaze();
@@ -48,7 +47,7 @@ function resizeMaze() {
 function init() {
     generateMaze();
     gameLoop();
-    canvas2.addEventListener('click', function(e) { getCursorPosition(canvas, e) }, false);
+    canvas2.addEventListener('click', function (e) { getCursorPosition(canvas, e); }, false);
 }
 
 var form = document.querySelector('form');
@@ -57,7 +56,9 @@ form.onsubmit = function () {
     mazeCols = parseInt(form.maze_cols.value);
     generateMaze(mazeRows, mazeCols);
     resizeMaze();
-    avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50); //positions avatar at the start cell
+
+    //positions avatar at the start cell
+    avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50);
     return false;
 };
 
@@ -66,8 +67,10 @@ function generateMaze(r = defaultRows, c = defaultCols) {
     mazeGenBacktracking(r, c);
     drawMaze();
     console.log(mazeSolver(r, c));
+
     //console.log(maze);
-    avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50); //positions avatar at the start cell
+    //positions avatar at the start cell
+    avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50);
 }
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
@@ -186,6 +189,7 @@ function drawWalls() {
 	}
     }
 }
+
 
 function displayStartEnd() {
     ctx.fillStyle = 'rgba(20, 255, 20, 0.8)';
@@ -396,12 +400,12 @@ window.addEventListener('keyup', function (e) {
 }
 		       );
 
-var avatarX = 400,
-    avatarY = 300,
-    velX = 0,
-    velY = 0,
-    keys = [],
-    maxSpeed = 4;
+var avatarX = 400;
+var avatarY = 300;
+var velX = 0;
+var velY = 0;
+var keys = [];
+var maxSpeed = 4;
 
 function avatarPosition(a, b) {
     avatarX = a;
@@ -426,27 +430,29 @@ function gameLoop() {
 }
 
 function arraysEqual(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (a.length !== b.length) return false;
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
 
-  // If you don't care about the order of the elements inside
-  // the array, you should sort both arrays here.
-  // Please note that calling sort on an array will modify that array.
-  // you might want to clone your array first.
+    // If you don't care about the order of the elements inside
+    // the array, you should sort both arrays here.
+    // Please note that calling sort on an array will modify that array.
+    // you might want to clone your array first.
 
-  for (var i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) return false;
-  }
-  return true;
+    for (var i = 0; i < a.length; ++i) {
+	if (a[i] !== b[i]) return false;
+    }
+
+    return true;
 }
 
 function checkEquality(pix) {
-	    for (j = 0; j < pix.length; j++){
-		if (arraysEqual(pix[j], [0,0,0,255])){ return true; }
-	    }
-	    return false;
-	}
+    for (j = 0; j < pix.length; j++) {
+	if (arraysEqual(pix[j], [0, 0, 0, 255])) { return true; }
+    }
+
+    return false;
+}
 
 function whatKey() {
     if (keys[37]) {
@@ -477,7 +483,6 @@ function whatKey() {
 	    velX += 1.0;
 	}
     }
-
     if (keys[40]) {
 	//velY = 4;  down key	
 	const bottomSide = [];
@@ -504,8 +509,13 @@ function whatKey() {
 	} else if (velY > -maxSpeed) {
 	    velY -= 1.0;
 	}
+
+
     }
+    
 }
+
+
 
 /* Returns an array containing the cells in sequential order from start to end
    making up the path through the maze */
