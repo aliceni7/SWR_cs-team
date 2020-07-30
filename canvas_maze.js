@@ -486,7 +486,7 @@ function whatKey() {
     if (keys[40]) {
 	//velY = 4;  down key	
 	const bottomSide = [];
-	for (i = 8; i < avatarWidth - 12; i++) {
+	for (i = 8; i < avatarWidth - 8; i++) {
 	    bottomSide.push(canvas.getContext('2d').getImageData(avatarX+i, avatarY+avatarHeight, 1, 1).data)
 	}
 	if (avatarY > canvas.height - avatarHeight || checkEquality(bottomSide)) {
@@ -500,7 +500,7 @@ function whatKey() {
     if (keys[38]) {
 	//velY = 4;  up key
 	const topSide = [];
-	for (i = 8; i < avatarWidth - 12; i++) {
+	for (i = 8; i < avatarWidth - 8; i++) {
 	    topSide.push(canvas.getContext('2d').getImageData(avatarX+i, avatarY, 1, 1).data)
 	}
 	if (avatarY < 0 || checkEquality(topSide)) {
