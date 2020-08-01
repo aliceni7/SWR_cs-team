@@ -10,11 +10,22 @@ spann.onclick = function() {
 /*var char_desc = document.getElementById("woot");
 woot.innerHTML = "Customize your character";*/
 
+
+// Skin tone select
+var skin_select = document.getElementById("skin");
+
+var isFirst = true;
 function select(color) {
     console.log(color);
-    avatar.style.background = color;
-    character_select.style.display = "none";
+    if (isFirst) {
+	skin_tone = document.getElementById(color);
+	skin_tone.style.border = "1px solid  #f94e30 ";
+	isFirst = false;
+    } else {
+	skin_tone.style.border = "0px";
+	skin_tone = document.getElementById(color);
+	skin_tone.style.border = "1px solid  #f94e30 ";
+    }
+    //avatar.style.background = color;
+    //character_select.style.display = "none";
 }
-
-
-
