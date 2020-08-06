@@ -4,9 +4,6 @@ var ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-//canvas2.width = 700;//window.innerWidth;
-//canvas2.height = 1000;//window.innerHeight;
-
 // Global variables
 var defaultRows = 10;
 var defaultCols = 10;
@@ -17,12 +14,14 @@ var startCell;
 var endCell;
 var cellWidth = canvas.width / (mazeCols + 1);
 var cellHeight = canvas.height / (mazeRows + 1);
+var avatarWidth = parseInt(cellWidth * .8);
+var avatarHeight = parseInt(cellHeight * .8);
 var COL = 0;
 var ROW = 1;
 var widthOffset = cellWidth / 2;
 var heightOffset = cellHeight / 2;
-var wallThickness = 3;
-var borderThickness = 8;
+var wallThickness = 8;
+var borderThickness = 10;
 
 /* Window Resizing */
 window.addEventListener('resize', resizeMaze);
@@ -41,6 +40,10 @@ function resizeMaze() {
   cellHeight = canvas.height / (mazeRows + 1);
   widthOffset = cellWidth / 2;
   heightOffset = cellHeight / 2;
+
+  //console.log(cellHeight * .8);
+  avatarWidth = parseInt(cellWidth * .8);
+  avatarHeight = parseInt(cellHeight * .8);
   drawMaze();
 }
 
@@ -58,7 +61,7 @@ form.onsubmit = function () {
   resizeMaze();
 
   //positions avatar at the start cell
-  avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50);
+  avatarPosition(startCell[COL] * cellWidth + cellWidth / 2, startCell[ROW] * cellHeight + cellHeight / 2 + 2);
   return false;
 };
 
@@ -425,7 +428,7 @@ function gameLoop() {
 
   //console.log(Math.round(avatarX), avatarY);
 
-  ctx2.fillRect(avatarX, avatarY, 50, 50);
+  ctx2.fillRect(avatarX, avatarY, avatarWidth, avatarHeight);
   requestAnimationFrame(gameLoop);
 }
 
@@ -458,7 +461,7 @@ function whatKey() {
   if (keys[37]) {
     //velX = -4;  left key
     const leftSide = [];
-    for (i = 5; i < 45; i++) {
+    for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
       leftSide.push(canvas.getContext('2d').getImageData(avatarX, avatarY + i, 1, 1).data);
     }
 
@@ -473,11 +476,12 @@ function whatKey() {
   if (keys[39]) {
     //velX = 4;  right key
     const rightSide = [];
-    for (i = 5; i < 45; i++) {
-      rightSide.push(canvas.getContext('2d').getImageData(avatarX + 50, avatarY + i, 1, 1).data);
+    for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
+      rightSide.push(canvas.getContext('2d').getImageData(avatarX + avatarWidth, avatarY + i, 1, 1).data);
     }
 
-    if (avatarX > canvas.width - 50 || checkEquality(rightSide)) {
+    console.log(rightSide);
+    if (avatarX > canvas.width - avatarWidth || checkEquality(rightSide)) {
       velX = 0;
       velY = 0;
     } else if (velX < maxSpeed) {
@@ -488,11 +492,11 @@ function whatKey() {
   if (keys[40]) {
     //velY = 4;  down key
     const bottomSide = [];
-    for (i = 5; i < 45; i++) {
-      bottomSide.push(canvas.getContext('2d').getImageData(avatarX + i, avatarY + 50, 1, 1).data);
+    for (i = wallThickness; i < avatarWidth - wallThickness; i++) {
+      bottomSide.push(canvas.getContext('2d').getImageData(avatarX + i, avatarY + avatarHeight, 1, 1).data);
     }
 
-    if (avatarY > canvas.height - 50 || checkEquality(bottomSide)) {
+    if (avatarY > canvas.height - avatarHeight || checkEquality(bottomSide)) {
       velX = 0;
       velY = 0;
     } else if (velY < maxSpeed) {
@@ -503,7 +507,7 @@ function whatKey() {
   if (keys[38]) {
     //velY = 4;  up key
     const topSide = [];
-    for (i = 5; i < 45; i++) {
+    for (i = wallThickness; i < avatarWidth - wallThickness; i++) {
       topSide.push(canvas.getContext('2d').getImageData(avatarX + i, avatarY, 1, 1).data);
     }
 
