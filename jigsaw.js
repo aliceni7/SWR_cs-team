@@ -27,11 +27,11 @@ function outsideClick(e){
 // canvas related vars
 var canvas = document.getElementById('puzzle_canvas');
 var ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-var cw = canvas.width;
-var ch = canvas.height;
-canvas.style.border='1px solid red';
+canvas.width = window.innerWidth; // - 2;
+canvas.height = window.innerHeight; // - 2;
+var cw = canvas.width; // - 2;
+var ch = canvas.height; // - 2;
+// canvas.style.border='1px solid black';
 
 // used to calc canvas position relative to window
 function reOffset(){
@@ -175,7 +175,7 @@ function drawAll(){
         var shape=shapes[i];
         if(shape.image){
             // it's an image
-            ctx.drawImage(shape.image,shape.x,shape.y, shape.width, shape.height);
+            ctx.drawImage(shape.image, shape.x, shape.y, shape.width, shape.height);
         }
     }
 }
