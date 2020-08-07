@@ -12,6 +12,8 @@ var mazeCols = 10;
 var maze = []; //will be a 2d array of "cells" containing info about walls
 var startCell;
 var endCell;
+var puzzleCells = [];
+var solvePath = [];
 var cellWidth = canvas.width / (mazeCols + 1);
 var cellHeight = canvas.height / (mazeRows + 1);
 var avatarWidth = parseInt(cellWidth * .8);
@@ -30,7 +32,7 @@ function getCursorPosition(canvas, event) {
   const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
-  console.log('x: ' + x + ' y: ' + y);
+  // console.log('x: ' + x + ' y: ' + y);
 }
 
 function resizeMaze() {
@@ -68,8 +70,9 @@ form.onsubmit = function () {
 function generateMaze(r = defaultRows, c = defaultCols) {
   makeBlankMaze(r, c);
   mazeGenBacktracking(r, c);
+  mazeSolver(r, c);
+  getPuzzleLocations();
   drawMaze();
-  console.log(mazeSolver(r, c));
 
   //console.log(maze);
   //positions avatar at the start cell
@@ -119,6 +122,7 @@ function fillWalls(rows = defaultRows, cols = defaultCols) {
 function drawMaze() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   displayStartEnd();
+  displayPuzzleLocations();
   drawWalls();
 }
 
@@ -480,7 +484,7 @@ function whatKey() {
       rightSide.push(canvas.getContext('2d').getImageData(avatarX + avatarWidth, avatarY + i, 1, 1).data);
     }
 
-    console.log(rightSide);
+    // console.log(rightSide);
     if (avatarX > canvas.width - avatarWidth || checkEquality(rightSide)) {
       velX = 0;
       velY = 0;
@@ -527,7 +531,8 @@ function mazeSolver(rows = defaultRows, cols = defaultCols) {
   var visited = makeArray(rows, cols, false);
   stack.push(startCell);
   visited[startCell[COL]][startCell[ROW]] = true;
-  return solveHelper(stack, visited, maze);
+  solvePath = solveHelper(stack, visited, maze);
+  console.log(solvePath);
 }
 
 function solveHelper(stack, visited, maze) {
@@ -587,6 +592,65 @@ function noWallUnvisitedNeighbors(cell, visited) {
   }
 
   return validNeighbors;
+}
+
+function noWallNeighbors(cell){
+  var validNeighbors = [];
+  var tempCell;
+  var currRow = cell[ROW];
+  var currCol = cell[COL];
+
+  // Check cell on top
+  if (currRow !== 0 && maze[currCol][currRow].walls.indexOf('top') === -1) {
+    tempCell = [currCol, currRow - 1];
+    validNeighbors.push(tempCell);
+  }
+
+  // Check cell below
+  if (currRow !== visited[currCol].length - 1 && maze[currCol][currRow].walls.indexOf('bot') === -1) {
+    tempCell = [currCol, currRow + 1];
+    validNeighbors.push(tempCell);
+  }
+
+  // Check cell to left
+  if (currCol !== 0 && maze[currCol][currRow].walls.indexOf('left') === -1) {
+    tempCell = [currCol - 1, currRow];
+    validNeighbors.push(tempCell);
+  }
+
+  // Check cell to right
+  if (currCol !== visited.length - 1 && maze[currCol][currRow].walls.indexOf('right') === -1) {
+    tempCell = [currCol + 1, currRow];
+    validNeighbors.push(tempCell);
+  }
+
+  return validNeighbors;
+}
+
+/* Returns an array of cells that will spawn puzzles when avatar steps on it
+   Location of puzzles should be as even as possible
+   Puzzles should help indicate that the player is going in the right direction
+   i.e. after passing a cell that has noWallNeighbors length of 3
+*/
+function getPuzzleLocations(numPuzzles = 3) {
+  puzzleCells = [];
+  var zoneLength = solvePath.length / (numPuzzles + 1);
+  var puzzlesAdded = 0;
+  for (var i = 0; i < solvePath.length && puzzlesAdded < numPuzzles; i++) {
+    console.log(parseInt(zoneLength * (puzzlesAdded + 1)));
+    if (i === parseInt(zoneLength * (puzzlesAdded + 1))) {
+      puzzleCells.push(solvePath[i]);
+      puzzlesAdded++;
+    }
+  }
+  console.log(puzzleCells);
+}
+
+function displayPuzzleLocations() {
+  for (var i = 0; i < puzzleCells.length; i++) {
+    ctx.fillStyle = 'rgba(20, 20, 255, 0.8)';
+    ctx.fillRect(puzzleCells[i][COL] * cellWidth + widthOffset, puzzleCells[i][ROW] * cellHeight + heightOffset, cellWidth, cellHeight);
+  }
 }
 
 init();
