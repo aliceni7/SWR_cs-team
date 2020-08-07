@@ -15,12 +15,6 @@ body {
   background: #333;
 }
 
-.canvas {
-  z-index: 2;
-  /* height: 100%; */
-  /* width: 100%; */
-}
-
 .modal {
   display: none;
   position: fixed;
@@ -35,12 +29,12 @@ body {
 
 .modal-content{
   background-color: #f4f4f4;
-  margin: 10% auto;
+  /* margin: 10% auto;
   width: 90%;
-  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.2); */
 }
 
-.modal-header h2, .modal-footer h3{
+/* .modal-header h2, .modal-footer h3{
   margin: 0;
 }
 
@@ -51,7 +45,6 @@ body {
 }
 
 .modal-body{
-  /* padding: 10px 20px; */
   height: 100%;
   width: 100%;
 }
@@ -61,13 +54,15 @@ body {
   padding: 10px;
   color: #fff;
   text-align: center;
-}
+} */
 
 .closeBtn{
   color: #ccc;
   float: right;
   font-size: 30px;
   color: #fff;
+  z-index: 2;
+  position: relative;
 }
 
 .closeBtn: hover, .closeBtn: focus{
@@ -79,4 +74,8 @@ body {
 @keyframes modalopen{
   from{opacity: 0}
   to {opacity: 1}
+}
+
+#puzzle_canvas {
+  position: absolute;
 }

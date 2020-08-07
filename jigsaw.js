@@ -10,6 +10,7 @@ closeBtn[0].addEventListener('click', closeModal);
 //function to open modalBtn
 function openModal(){
   modal.style.display = 'block';
+  reOffset();
 }
 
 function closeModal(){
@@ -24,12 +25,12 @@ function outsideClick(e){
 
 // Dragging picture around canvas
 // canvas related vars
-var canvas=document.getElementById("puzzle_canvas");
-var ctx=canvas.getContext("2d");
-// canvas.width=window.innerWidth;
-// canvas.height=window.innerHeight;
-var cw=canvas.width;
-var ch=canvas.height;
+var canvas = document.getElementById('puzzle_canvas');
+var ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+var cw = canvas.width;
+var ch = canvas.height;
 canvas.style.border='1px solid red';
 
 // used to calc canvas position relative to window
@@ -39,11 +40,11 @@ function reOffset(){
     offsetY=BB.top;
 }
 var offsetX,offsetY;
-reOffset();
+window.onload=function(e){ reOffset(); }
 window.onscroll=function(e){ reOffset(); }
 window.onresize=function(e){ reOffset(); }
 canvas.onresize=function(e){ reOffset(); }
-canvas.onclick=function(e){ reOffset(); }
+// canvas.onclick=function(e){ reOffset(); }
 
 // save relevant information about shapes drawn on the canvas
 var shapes=[];
@@ -56,21 +57,30 @@ var startX,startY;
 var selectedShapeIndex;
 
 // load the image
-var toucan=new Image();
-toucan.onload=function(){
+var imgsrcs = [
+  './jigsaw_pics/Space.jpg',
+  './jigsaw_pics/Forest.jpg',
+  './jigsaw_pics/Buildings.jpg'
+];
+for (var i = 0; i < imgsrcs.length; i++){
+  var img = new Image();
+  img.onload=function(){
     // define one image and save it in the shapes[] array
-    shapes.push( {x:30, y:10, width:toucan.width, height:toucan.height, image:toucan} );
+    shapes.push( {x:20 * i, y: 20 * i, width:100, height:100, naturalWidth: img.naturalWidth, naturalHeight: img.naturalHeight, image:img} );
     // draw the shapes on the canvas
     drawAll();
-    // listen for mouse events
-    canvas.onmousedown=handleMouseDown;
-    canvas.onmousemove=handleMouseMove;
-    canvas.onmouseup=handleMouseUp;
-    canvas.onmouseout=handleMouseOut;
-};
-// put your image src here!
-toucan.src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/-_panoramio_-_Basa_Roland.jpg/240px--_panoramio_-_Basa_Roland.jpg';
+  };
+  img.src=imgsrcs[i];
+}
+// listen for mouse events
 
+canvas.onmousedown=handleMouseDown;
+canvas.onmousemove=handleMouseMove;
+canvas.onmouseup=handleMouseUp;
+canvas.onmouseout=handleMouseOut;
+// put your image src here!
+// img.src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/-_panoramio_-_Basa_Roland.jpg/240px--_panoramio_-_Basa_Roland.jpg';
+// img.src = 'C:/Users/rache/Documents/Sparks_Within_Reach/SWR_cs-team/jigsaw_pics/Space.jpg';
 
 // given mouse X & Y (mx & my) and shape object
 // return true/false whether mouse is inside the shape
