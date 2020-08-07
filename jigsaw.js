@@ -64,13 +64,14 @@ var imgsrcs = [
 ];
 for (var i = 0; i < imgsrcs.length; i++){
   var img = new Image();
+  img.src=imgsrcs[i];
   img.onload=function(){
     // define one image and save it in the shapes[] array
-    shapes.push( {x:20 * i, y: 20 * i, width:100, height:100, naturalWidth: img.naturalWidth, naturalHeight: img.naturalHeight, image:img} );
+    shapes.push( {x: parseInt(Math.random() * 500 + 200), y: parseInt(Math.random() * 500 + 200), width:100, height:100, image:this} );
+    console.log(shapes);
     // draw the shapes on the canvas
     drawAll();
   };
-  img.src=imgsrcs[i];
 }
 // listen for mouse events
 
