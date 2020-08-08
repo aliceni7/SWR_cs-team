@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Jigsaw Puzzle </title>
+
+    <style>
+
+    </style>
+    <script>
+      function load() {
+        console.log("load event detected!");
+      }
+      window.onload = load;
+    </script>
+  </head>
+  <body>
+    <canvas id = "puzzle" class = "canvas" width = "700" height = "700"> </canvas>
+  </body>
+  <script>
+    window.onload = function()
+    {
+      can = document.getElementById("canvas");
+      ctx = can.getContext("2d");
+
+      var im = new Image();
+      im.src = "img/enviro.jpg";
+      im.onload = function()
+      {
+        for (i = 0; i < 4; i++) {
+          for (j = 0; j < 4; j++) {
+            x = i * 140;
+            y = j * 140;
+            ctx.drawImage(im, x, y, 140, 140, x + i * 5; y + j * 5; 140; 140);
+          }
+        }
+      }
+    }
+  </script>
+</html>
