@@ -14,7 +14,11 @@
             return this;
         }
 
-        $('#puzzle-image').attr('src', 'content/images/Earth.png');
+        view.currentScroll = new Point(0, 0);
+        var scrollVector = new Point(0,0);
+        var scrollMargin = 32;
+
+        $('#puzzle-image').attr('src', 'content/images/enviro.jpg');
 
         var imgWidth = $('.puzzle-image').css('width').replace('px', '');
         var imgHeight = $('.puzzle-image').css('height').replace('px', '');
@@ -22,9 +26,9 @@
         var config = ({
             zoomScaleOnDrag: 1.125,
             imgName: 'puzzle-image',
-            tileWidth:100,
-            tilesPerRow: 4,
-            tilesPerColumn: 3,
+            tileWidth: 125,
+            // tilesPerRow: 3,
+            // tilesPerColumn: 3,
             imgWidth: imgWidth,
             imgHeight: imgHeight,
             shadowWidth: 120
@@ -35,17 +39,92 @@
         var path;
         var movePath = false;
 
+        $('.zoomIn').click(function() {
+            puzzle.zoom(.1);
+        });
+
+        $('.zoomOut').click(function() {
+            puzzle.zoom(-.1);
+        });
+
+        $('.help').mousedown(function() {
+            if ($('.canvas').css('display') == 'none') {
+                $('.canvas').show();
+                $('.puzzle-image').hide();
+                $('.logo').hide();
+            }
+            else {
+                $('.canvas').hide();
+                $('.puzzle-image').show();
+                $('.logo').show();
+            }
+        });
+
+        var charmsWidth = $('.charms').css('width').replace('px', '');
+        $('.puzzle-image').css('margin', '-' + imgHeight/2 + 'px 0 0 -' + imgWidth/2 + 'px');
+
+        function onMouseDown(event) {
+            puzzle.pickTile();
+        }
+
+        function onMouseUp(event) {
+            puzzle.releaseTile();
+        }
+
+        function onMouseMove(event) {
+            puzzle.mouseMove(event.point, event.delta);
+
+            if (event.point.x < scrollMargin) {
+                scrollVector = new Point(scrollMargin - event.point.x, 0);
+            }
+            else {
+                scrollVector = new Point(0, 0);
+            }
+        }
+
+        function onMouseDrag(event) {
+            puzzle.dragTile(event.delta);
+        }
+
+        function onKeyUp(event) {
+            switch(event.key) {
+                case 'z':
+                    puzzle.zoom(.1);
+                    break;
+                case 'x':
+                    puzzle.zoom(-.1);
+                    break;
+                }
+        }
+
+//        function onFrame(event) {
+//            if (puzzle.selectedTile) {
+//                puzzle.selectedTile.rotate(5);
+//            }
+//        }
+
         function Puzzle(config) {
             instance = this;
             this.currentZoom = 1;
-            this.puzzleImage = new Raster(config.imgName);
+            this.zoomScaleOnDrag = config.zoomScaleOnDrag;
+            this.imgName = config.imgName;
+            this.shadowWidth = config.shadowWidth;
+            this.puzzleImage = new Raster('puzzle-image');
             this.puzzleImage.position = view.center;
             this.puzzleImage.visible = false;
             this.tileWidth = config.tileWidth;
             this.tilesPerRow = Math.ceil(config.imgWidth / config.tileWidth);
             this.tilesPerColumn = Math.ceil(config.imgHeight / config.tileWidth);
             this.tileMarginWidth = this.tileWidth * 0.203125;
+            this.selectedTile = undefined;
+            this.selectedTileIndex = undefined;
+            this.selectionGroup = undefined;
+            this.shadowScale = 1.5;
             this.tiles = createTiles(this.tilesPerRow, this.tilesPerColumn);
+            instance.puzzleImage = new Raster('puzzle-image');
+            instance.puzzleImage.position = view.center;
+            instance.puzzleImage.visible = false;
+
 
             function createTiles(xTileCount, yTileCount) {
                 var tiles = new Array();
@@ -59,7 +138,7 @@
                         var shape = shapeArray[y * xTileCount + x];
 
                         var mask = getMask(tileRatio, shape.topTab, shape.rightTab, shape.bottomTab, shape.leftTab, instance.tileWidth);
-                        mask.opacity = 0.25;
+                        mask.opacity = 1;
                         mask.strokeColor = '#fff';
 
                         var cloneImg = instance.puzzleImage.clone();
@@ -244,7 +323,7 @@
             };
 
             function getTileRaster(sourceRaster, size, offset) {
-                var targetRaster = new Raster('empty');
+                var targetRaster = new Raster('puzzle-image');
                 var tileWithMarginWidth = size.width + instance.tileMarginWidth * 2;
                 var data = sourceRaster.getData(new Rectangle(
                     offset.x - instance.tileMarginWidth,
@@ -255,12 +334,191 @@
                 targetRaster.position = new Point(28, 36);
                 return targetRaster;
             }
+
+            this.pickTile = function() {
+                if (instance.selectedTile) {
+                    if (!instance.selectedTile.lastScale) {
+                        instance.selectedTile.lastScale = instance.zoomScaleOnDrag;
+                        instance.selectedTile.scale(instance.selectedTile.lastScale);
+                    }
+                    else {
+                        if (instance.selectedTile.lastScale > 1) {
+                            instance.releaseTile();
+                            return;
+                        }
+                    }
+
+                    instance.selectedTile.cellPosition = undefined;
+
+                    instance.selectionGroup = new Group(instance.selectedTile);
+
+                    var pos = new Point(instance.selectedTile.position.x, instance.selectedTile.position.y);
+                    instance.selectedTile.position = new Point(0, 0);
+
+                    instance.selectionGroup.position = pos;
+                }
+            }
+
+            this.releaseTile = function() {
+                if (instance.selectedTile) {
+
+                    var cellPosition = new Point(
+                        Math.round(instance.selectionGroup.position.x / instance.tileWidth),
+                        Math.round(instance.selectionGroup.position.y / instance.tileWidth));
+
+                    var roundPosition = cellPosition * instance.tileWidth;
+
+                    var hasConflict = false;
+
+                    var alreadyPlacedTile = getTileAtCellPosition(cellPosition);
+
+                    hasConflict = alreadyPlacedTile;
+
+                    var topTile = getTileAtCellPosition(cellPosition + new Point(0, -1));
+                    var rightTile = getTileAtCellPosition(cellPosition + new Point(1, 0));
+                    var bottomTile = getTileAtCellPosition(cellPosition + new Point(0, 1));
+                    var leftTile = getTileAtCellPosition(cellPosition + new Point(-1, 0));
+
+                    if (topTile) {
+                        hasConflict = hasConflict || !(topTile.shape.bottomTab + instance.selectedTile.shape.topTab == 0);
+                    }
+
+                    if (bottomTile) {
+                        hasConflict = hasConflict || !(bottomTile.shape.topTab + instance.selectedTile.shape.bottomTab == 0);
+                    }
+
+                    if (rightTile) {
+                        hasConflict = hasConflict || !(rightTile.shape.leftTab + instance.selectedTile.shape.rightTab == 0);
+                    }
+
+                    if (leftTile) {
+                        hasConflict = hasConflict || !(leftTile.shape.rightTab + instance.selectedTile.shape.leftTab == 0);
+                    }
+
+                    if (!hasConflict) {
+
+                        if (instance.selectedTile.lastScale) {
+                            instance.selectedTile.scale(1 / instance.selectedTile.lastScale);
+                            instance.selectedTile.lastScale = undefined;
+                        }
+
+                        instance.selectionGroup.remove();
+                        var tile = instance.tiles[instance.selectedTileIndex];
+                        tile.position = roundPosition;
+                        tile.cellPosition = cellPosition;
+                        instance.selectionGroup.remove();
+                        instance.selectedTile =
+                        instance.selectionGroup = null;
+                        project.activeLayer.addChild(tile);
+
+                        var errors = checkTiles();
+                        if (errors == 0) {
+                            alert('Congratulations!!!');
+                        }
+                    }
+                }
+            }
+
+            function getTileAtCellPosition(point) {
+                var width = instance.tilesPerRow;
+                var height = instance.tilesPerColumn;
+                var tile = undefined;
+                for (var i = 0; i < instance.tiles.length; i++) {
+                    if (instance.tiles[i].cellPosition == point) {
+                        tile = instance.tiles[i];
+                        break;
+                    }
+                }
+                return tile;
+            }
+
+            this.dragTile = function(delta) {
+                if (instance.selectedTile) {
+                    instance.selectionGroup.position += delta;
+                    instance.selectedTile.opacity = 1;
+                }
+                else {
+                    var currentScroll = view.currentScroll - delta * instance.currentZoom;
+                    view.scrollBy(currentScroll);
+                    view.currentScroll = currentScroll;
+                }
+            }
+
+            this.mouseMove = function(point, delta) {
+                if (!instance.selectionGroup) {
+                    project.activeLayer.selected = false;
+                    if (delta.x < 8 && delta.y < 8) {
+                        var tolerance = instance.tileWidth * .5;
+                        var hit = false;
+                        for (var index = 0; index < instance.tiles.length; index++) {
+                            var tile = instance.tiles[index];
+                            var row = parseInt(index / config.tilesPerRow);
+                            var col = index % config.tilesPerRow;
+
+                            var tileCenter = tile.position;
+
+                            var deltaPoint = tileCenter - point;
+                            hit = (deltaPoint.x * deltaPoint.x +
+                                        deltaPoint.y * deltaPoint.y) < tolerance * tolerance;
+
+                            if (hit) {
+                                instance.selectedTile = tile;
+                                instance.selectedTileIndex = index;
+                                tile.opacity = .5;
+                                project.activeLayer.addChild(tile);
+                                return;
+                            }
+                            else {
+                                tile.opacity = 1;
+                            }
+                        }
+                        if (!hit)
+                            instance.selectedTile = null;
+                    }
+                }
+                else {
+                    instance.dragTile(delta);
+                }
+            }
+
+            this.zoom = function(zoomDelta) {
+                var newZoom = instance.currentZoom + zoomDelta;
+                if (newZoom >= 0.3 && newZoom <= 1) {
+                    view.zoom =
+                    instance.currentZoom = newZoom;
+                }
+            }
+
+            function checkTiles() {
+                var errors = 0;
+                var firstTile = instance.tiles[0];
+                var firstCellPosition = firstTile.cellPosition;
+
+                for (var y = 0; y < instance.tilesPerColumn; y++) {
+                    for (var x = 0; x < instance.tilesPerRow; x++) {
+                        var index = y * instance.tilesPerRow + x;
+                        var cellPosition = instance.tiles[index].cellPosition;
+
+                        if (cellPosition != firstCellPosition + new Point(x, y)) {
+                            errors++;
+                        }
+                    }
+                }
+
+                return errors;
+            }
         }
     </script>
 </head>
 <body>
-    <canvas id="canvas" class="canvas" resize></canvas>
-    <img width="256" height="256" id="puzzle-image" class="puzzle-image" style="display: none;" src="content/images/environment.jpeg" />
+    <img width="920" height="120" src="content/images/logo.png" class="logo"/>
+    <canvas id="canvas" class="canvas" width = "2000px" height = "1600px"></canvas>
+    <div class="charms">
+        <img width="50" height="50" src="content/images/zoomIn.png" class="zoomIn"/>
+        <img width="50" height="50" src="content/images/zoomOut.png" class="zoomOut"/>
+        <img width="50" height="50" src="content/images/help.png" class="help"/>
+    </div>
+    <img width="256" height="256" id="puzzle-image" class="puzzle-image" style="display: none;" src="content/images/enviro.jpg" />
     <img width="128" height="128" id="empty" style="display: none;" src="content/images/empty.png" />
 </body>
 </html>
