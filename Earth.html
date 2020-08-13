@@ -1,0 +1,266 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML5 Puzzle</title>
+    <meta property="og:title" content="Html5 Jigsaw Puzzle">
+    <meta property="og:image" content="http://dl.dropbox.com/u/5728198/html5puzzle/content/images/puzzle.jpg">
+    <meta property="og:description" content="An online jigsaw puzzle by Marcelo Ricardo de Oliveira using the stunning features of the Paper JS framework">
+    <link href="content/Puzzle.css" rel="stylesheet" type="text/css" />
+    <script src="content/js/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="content/js/paper.js" type="text/javascript"></script>
+    <script type="text/paperscript" canvas="canvas">
+        Array.prototype.remove = function(start, end) {
+            this.splice(start, end);
+            return this;
+        }
+
+        $('#puzzle-image').attr('src', 'content/images/Earth.png');
+
+        var imgWidth = $('.puzzle-image').css('width').replace('px', '');
+        var imgHeight = $('.puzzle-image').css('height').replace('px', '');
+
+        var config = ({
+            zoomScaleOnDrag: 1.125,
+            imgName: 'puzzle-image',
+            tileWidth:100,
+            tilesPerRow: 4,
+            tilesPerColumn: 3,
+            imgWidth: imgWidth,
+            imgHeight: imgHeight,
+            shadowWidth: 120
+        });
+
+        var puzzle = new Puzzle(config);
+        puzzle.zoom(-.3);
+        var path;
+        var movePath = false;
+
+        function Puzzle(config) {
+            instance = this;
+            this.currentZoom = 1;
+            this.puzzleImage = new Raster(config.imgName);
+            this.puzzleImage.position = view.center;
+            this.puzzleImage.visible = false;
+            this.tileWidth = config.tileWidth;
+            this.tilesPerRow = Math.ceil(config.imgWidth / config.tileWidth);
+            this.tilesPerColumn = Math.ceil(config.imgHeight / config.tileWidth);
+            this.tileMarginWidth = this.tileWidth * 0.203125;
+            this.tiles = createTiles(this.tilesPerRow, this.tilesPerColumn);
+
+            function createTiles(xTileCount, yTileCount) {
+                var tiles = new Array();
+                var tileRatio = instance.tileWidth / 100.0;
+
+                var shapeArray = getRandomShapes(xTileCount, yTileCount);
+                var tileIndexes = new Array();
+                for (var y = 0; y < yTileCount; y++) {
+                    for (var x = 0; x < xTileCount; x++) {
+
+                        var shape = shapeArray[y * xTileCount + x];
+
+                        var mask = getMask(tileRatio, shape.topTab, shape.rightTab, shape.bottomTab, shape.leftTab, instance.tileWidth);
+                        mask.opacity = 0.25;
+                        mask.strokeColor = '#fff';
+
+                        var cloneImg = instance.puzzleImage.clone();
+                        var img = getTileRaster(
+                            cloneImg,
+                            new Size(instance.tileWidth, instance.tileWidth),
+                            new Point(instance.tileWidth * x, instance.tileWidth * y)
+                        );
+
+                        var border = mask.clone();
+                        border.strokeColor = '#ccc';
+                        border.strokeWidth = 5;
+
+                        var tile = new Group(mask, border, img, border);
+                        tile.clipped = true;
+                        tile.opacity = 1;
+
+                        tile.shape = shape;
+                        tile.imagePosition = new Point(x, y);
+
+                        tiles.push(tile);
+                        tileIndexes.push(tileIndexes.length);
+                    }
+                }
+
+                for (var y = 0; y < yTileCount; y++) {
+                    for (var x = 0; x < xTileCount; x++) {
+
+                        var index1 = Math.floor(Math.random() * tileIndexes.length);
+                        var index2 = tileIndexes[index1];
+                        var tile = tiles[index2];
+                        tileIndexes.remove(index1, 1);
+
+                        var position = view.center -
+                                        new Point(instance.tileWidth, instance.tileWidth / 2) +
+                                        new Point(instance.tileWidth * (x * 2 + ((y % 2))), instance.tileWidth  * y) -
+                                        new Point(instance.puzzleImage.size.width, instance.puzzleImage.size.height / 2);
+
+                        var cellPosition = new Point(
+                            Math.round(position.x / instance.tileWidth) + 1,
+                            Math.round(position.y / instance.tileWidth) + 1);
+
+                        tile.position = cellPosition * instance.tileWidth;
+                        tile.cellPosition = cellPosition;
+                    }
+                }
+
+                return tiles;
+            }
+
+            function getRandomShapes(width, height) {
+                var shapeArray = new Array();
+
+                for (var y = 0; y < height; y++) {
+                    for (var x = 0; x < width; x++) {
+
+                        var topTab = undefined;
+                        var rightTab = undefined;
+                        var bottomTab = undefined;
+                        var leftTab = undefined;
+
+                        if (y == 0)
+                            topTab = 0;
+
+                        if (y == height - 1)
+                            bottomTab = 0;
+
+                        if (x == 0)
+                            leftTab = 0;
+
+                        if (x == width - 1)
+                            rightTab = 0;
+
+                        shapeArray.push(
+                            ({
+                                topTab: topTab,
+                                rightTab: rightTab,
+                                bottomTab: bottomTab,
+                                leftTab: leftTab
+                            })
+                        );
+                    }
+                }
+
+                for (var y = 0; y < height; y++) {
+                    for (var x = 0; x < width; x++) {
+
+                        var shape = shapeArray[y * width + x];
+
+                        var shapeRight = (x < width - 1) ?
+                            shapeArray[y * width + (x + 1)] :
+                            undefined;
+
+                        var shapeBottom = (y < height - 1) ?
+                            shapeArray[(y + 1) * width + x] :
+                            undefined;
+
+                        shape.rightTab = (x < width - 1) ?
+                            getRandomTabValue() :
+                            shape.rightTab;
+
+                        if (shapeRight)
+                            shapeRight.leftTab = - shape.rightTab;
+
+                        shape.bottomTab = (y < height - 1) ?
+                            getRandomTabValue() :
+                            shape.bottomTab;
+
+                        if (shapeBottom)
+                            shapeBottom.topTab = - shape.bottomTab;
+                    }
+                }
+                return shapeArray;
+            }
+
+            function getRandomTabValue() {
+                return Math.pow(-1, Math.floor(Math.random() * 2));
+            }
+
+            function getMask(tileRatio, topTab, rightTab, bottomTab, leftTab, tileWidth) {
+
+                var curvyCoords = [
+                      0, 0, 35, 15, 37, 5,
+                      37, 5, 40, 0, 38, -5,
+                      38, -5, 20, -20, 50, -20,
+                      50, -20, 80, -20, 62, -5,
+                      62, -5, 60, 0, 63, 5,
+                      63, 5, 65, 15, 100, 0
+                ];
+
+                var mask = new Path();
+                var tileCenter = view.center;
+
+                var topLeftEdge = new Point(-4,4);
+
+                mask.moveTo(topLeftEdge);
+
+                //Top
+                for (var i = 0; i < curvyCoords.length / 6; i++) {
+                    var p1 = topLeftEdge + new Point(curvyCoords[i * 6 + 0] * tileRatio, topTab * curvyCoords[i * 6 + 1] * tileRatio);
+                    var p2 = topLeftEdge + new Point(curvyCoords[i * 6 + 2] * tileRatio, topTab * curvyCoords[i * 6 + 3] * tileRatio);
+                    var p3 = topLeftEdge + new Point(curvyCoords[i * 6 + 4] * tileRatio, topTab * curvyCoords[i * 6 + 5] * tileRatio);
+
+                    mask.cubicCurveTo(p1, p2, p3);
+                }
+                //Right
+                var topRightEdge = topLeftEdge + new Point(tileWidth, 0);
+                for (var i = 0; i < curvyCoords.length / 6; i++) {
+                    var p1 = topRightEdge + new Point(-rightTab * curvyCoords[i * 6 + 1] * tileRatio, curvyCoords[i * 6 + 0] * tileRatio);
+                    var p2 = topRightEdge + new Point(-rightTab * curvyCoords[i * 6 + 3] * tileRatio, curvyCoords[i * 6 + 2] * tileRatio);
+                    var p3 = topRightEdge + new Point(-rightTab * curvyCoords[i * 6 + 5] * tileRatio, curvyCoords[i * 6 + 4] * tileRatio);
+
+                    mask.cubicCurveTo(p1, p2, p3);
+                }
+                //Bottom
+                var bottomRightEdge = topRightEdge + new Point(0, tileWidth);
+                for (var i = 0; i < curvyCoords.length / 6; i++) {
+                    var p1 = bottomRightEdge - new Point(curvyCoords[i * 6 + 0] * tileRatio, bottomTab * curvyCoords[i * 6 + 1] * tileRatio);
+                    var p2 = bottomRightEdge - new Point(curvyCoords[i * 6 + 2] * tileRatio, bottomTab * curvyCoords[i * 6 + 3] * tileRatio);
+                    var p3 = bottomRightEdge - new Point(curvyCoords[i * 6 + 4] * tileRatio, bottomTab * curvyCoords[i * 6 + 5] * tileRatio);
+
+                    mask.cubicCurveTo(p1, p2, p3);
+                }
+                //Left
+                var bottomLeftEdge = bottomRightEdge - new Point(tileWidth, 0);
+                for (var i = 0; i < curvyCoords.length / 6; i++) {
+                    var p1 = bottomLeftEdge - new Point(-leftTab * curvyCoords[i * 6 + 1] * tileRatio, curvyCoords[i * 6 + 0] * tileRatio);
+                    var p2 = bottomLeftEdge - new Point(-leftTab * curvyCoords[i * 6 + 3] * tileRatio, curvyCoords[i * 6 + 2] * tileRatio);
+                    var p3 = bottomLeftEdge - new Point(-leftTab * curvyCoords[i * 6 + 5] * tileRatio, curvyCoords[i * 6 + 4] * tileRatio);
+
+                    mask.cubicCurveTo(p1, p2, p3);
+                }
+
+                return mask;
+            }
+
+            var hitOptions = {
+                segments: true,
+                stroke: true,
+                fill: true,
+                tolerance: 5
+            };
+
+            function getTileRaster(sourceRaster, size, offset) {
+                var targetRaster = new Raster('empty');
+                var tileWithMarginWidth = size.width + instance.tileMarginWidth * 2;
+                var data = sourceRaster.getData(new Rectangle(
+                    offset.x - instance.tileMarginWidth,
+                    offset.y - instance.tileMarginWidth,
+                    tileWithMarginWidth,
+                    tileWithMarginWidth));
+                targetRaster.setData(data, new Point(0, 0))
+                targetRaster.position = new Point(28, 36);
+                return targetRaster;
+            }
+        }
+    </script>
+</head>
+<body>
+    <canvas id="canvas" class="canvas" resize></canvas>
+    <img width="256" height="256" id="puzzle-image" class="puzzle-image" style="display: none;" src="content/images/environment.jpeg" />
+    <img width="128" height="128" id="empty" style="display: none;" src="content/images/empty.png" />
+</body>
+</html>
