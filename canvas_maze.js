@@ -431,7 +431,10 @@ function gameLoop() {
   Math.round(avatarY);
 
   //console.log(Math.round(avatarX), avatarY);
-
+  if (velX || velY){
+    checkOnPuzzle();
+  }
+  
   ctx2.fillRect(avatarX, avatarY, avatarWidth, avatarHeight);
   requestAnimationFrame(gameLoop);
 }
@@ -453,9 +456,10 @@ function arraysEqual(a, b) {
   return true;
 }
 
-function checkEquality(pix) {
+function checkEquality(pix, colorArray = [0, 0, 0, 255]) {
   for (j = 0; j < pix.length; j++) {
-    if (arraysEqual(pix[j], [0, 0, 0, 255])) { return true; }
+    if (arraysEqual(pix[j], colorArray)) { return true; }
+    // if (arraysEqual(pix[j], [0, 0, 0, 255])) { return true; }
   }
 
   return false;
@@ -553,6 +557,8 @@ function solveHelper(stack, visited, maze) {
   }
 }
 
+// Returns an array of cells neighboring the selected cell that have no wall in between
+// and is unvisited
 function noWallUnvisitedNeighbors(cell, visited) {
   var validNeighbors = [];
   var tempCell;
@@ -594,6 +600,7 @@ function noWallUnvisitedNeighbors(cell, visited) {
   return validNeighbors;
 }
 
+// Returns an array of cells neighboring the selected cell that have no wall in between
 function noWallNeighbors(cell){
   var validNeighbors = [];
   var tempCell;
@@ -637,19 +644,79 @@ function getPuzzleLocations(numPuzzles = 3) {
   var zoneLength = solvePath.length / (numPuzzles + 1);
   var puzzlesAdded = 0;
   for (var i = 0; i < solvePath.length && puzzlesAdded < numPuzzles; i++) {
-    console.log(parseInt(zoneLength * (puzzlesAdded + 1)));
     if (i === parseInt(zoneLength * (puzzlesAdded + 1))) {
       puzzleCells.push(solvePath[i]);
       puzzlesAdded++;
     }
   }
-  console.log(puzzleCells);
+  // console.log(puzzleCells);
+  makePuzzles();
 }
 
 function displayPuzzleLocations() {
   for (var i = 0; i < puzzleCells.length; i++) {
     ctx.fillStyle = 'rgba(20, 20, 255, 0.8)';
     ctx.fillRect(puzzleCells[i][COL] * cellWidth + widthOffset, puzzleCells[i][ROW] * cellHeight + heightOffset, cellWidth, cellHeight);
+  }
+}
+
+// Returns cell if avatar is currently on a block that will spawn a puzzle, undefined if otherwise
+function checkOnPuzzle() {
+  for (var i = 0; i < puzzleCells.length; i++) {
+    var cell = checkInCell(puzzleCells[i]);
+    // console.log(cell);
+    if (cell !== undefined) {
+      return cell;
+    }
+  }
+  return;
+}
+
+function checkInCell(cell) {
+  var leftBound = cell[COL] * cellWidth + widthOffset;
+  var rightBound = (cell[COL] + 1) * cellWidth + widthOffset;
+  var topBound = cell[ROW] * cellHeight + heightOffset;
+  var botBound = (cell[ROW] + 1) * cellHeight + heightOffset;
+  // console.log(cell);
+  // console.log([leftBound, rightBound, topBound, botBound]);
+  var middle = [avatarX + avatarWidth / 2, avatarY + avatarHeight / 2];
+  // console.log(middle);
+  if (middle[COL] > leftBound && middle[COL] < rightBound && middle[ROW] > topBound && middle[ROW] < botBound) {
+    // console.log(true);
+    return cell;
+  }
+  return;
+}
+
+// creates modals for the puzzles
+function makePuzzles() {
+  var body = document.getElementsByTagName('BODY')[0];
+  for (var i = 0; i < puzzleCells.length; i++) {
+    var modal = document.createElement('DIV');
+    modal.classList.add('modal');
+    modal.style.display = 'none';
+    modal.id = 'puzzle' + i;
+    var modalContent = document.createElement('DIV');
+    modalContent.classList.add('modal-content');
+    var modalHeader = document.createElement('DIV');
+    modalHeader.classList.add('modal-header');
+    var modalButton = document.createElement('SPAN');
+    modalButton.classList.add('closeBtn');
+    modalButton.innerText = '&times;';
+    modalHeader.appendChild(modalButton);
+    var modalBody = document.createElement('DIV');
+    modalBody.classList.add('modal-body');
+    var puzzleCanvas = document.createElement('CANVAS');
+    puzzleCanvas.id = 'puzzle_canvas' + i;
+    puzzleCanvas.style.resize = 'both';
+    modalBody.appendChild(puzzleCanvas);
+    var modalFooter = document.createElement('DIV');
+    modalFooter.classList.add('modal-footer');
+    modalContent.appendChild(modalHeader);
+    modalContent.appendChild(modalBody);
+    modalContent.appendChild(modalFooter);
+    modal.appendChild(modalContent);
+    body.appendChild(modal);
   }
 }
 
