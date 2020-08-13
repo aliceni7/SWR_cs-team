@@ -1,3 +1,18 @@
+.title {
+    
+}
+
+.submit {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
 .dot {
     height: 80%;
     width: 10%;
@@ -7,6 +22,11 @@
     margin-right: 2%;
     margin-top: 1%;
     margin-left: 2%;
+}
+
+.dot:hover {
+    transform: scale(1.1, 1.1);
+    transition: 0.3s;
 }
 
 /* The Modal (background) */
@@ -84,8 +104,25 @@
     clear: both;
     float: right;
     width: 30%;
-    height: 70%;
+    height: 65%;
     margin-right: 40px;
+    border: 4px groove yellow;
+    border-radius: 5px;
+    background-color:   #9afe97   ;
+}
+
+.avatar {
+    position: absolute;
+    display: block;
+    #width: 150px;
+    #height: 280px;
+    width: 15%;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: 50px;
+    image-rendering: auto;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
 }
 
 #skin {
@@ -97,7 +134,7 @@
     margin-bottom: 20px;
     border: 4px groove yellow;
     border-radius: 5px;
-    background-color:   #61e577 ;
+    background-color:   #9afe97 ;
 }
 
 #hair-select {
@@ -108,7 +145,63 @@
     width: 60%;
     height: 25%;
     margin-top: -72px;
+    border: 4px groove yellow;
+    border-radius: 5px;
+    background-color:   #9afe97 ;
+}
 
+.hair-pic {
+    image-rendering: auto;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    padding-left: 20px;
+    padding-right: 10px;
+    padding-top: 20px;
+    float: left;
+    width: 12%;
+    height: 200px; /* not dynamic but looks better */
+    object-fit: cover;
+}
+
+.hair-pic:hover {
+    transform: scale(1.2, 1.2);
+    transition-duration: 0.3s;
+}
+
+.arrow {
+    image-rendering: auto;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    padding-left: 20px;
+    padding-right: 10px;
+    padding-top: 60px;
+    float: left;
+    width: 5%;
+    height: 50px; /* not dynamic but looks better */
+    object-fit: cover;
+
+}
+
+.arrow:hover {
+    transform: scale(1.1, 1.1);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.hair-color {
+    height: 40%;
+    width: 8%;
+    border-radius: 50%;  /* the roundness of the dot */
+    display: inline-block;
+    margin-right: 3%;
+    margin-top: 1%;
+    margin-left: 2%;
+
+}
+
+.hair-color:hover {
+    transform: scale(1.2, 1.2);
+    transition: 0.3s;
 }
 
 #clothes-select {
@@ -117,9 +210,52 @@
     width: 60%;
     height: 25%;
     margin-top: 20px;
-
+    border: 4px groove yellow;
+    border-radius: 5px;
+    background-color:   #9afe97 ;
 }
 
+.shirt-pic {
+    image-rendering: auto;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 15px;
+    float: left;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    object-fit: cover;
+}
+
+.shirt-pic:hover {
+    transform: scale(1.5, 1.5);
+    transition: 0.3s;
+}
+
+.pants-pic {
+    image-rendering: auto;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 30px;
+    float: left;
+    width: 100px;
+    height: 90px;
+    object-fit: cover;
+    object-position: 50% 100%;
+}
+
+.pants-pic:hover {
+    transform: scale(1.5, 1.5);
+    transition: 0.3s;
+}
+
+#pants-back {
+    padding-left: 100px;
+}
 
 #extra {
     float: left;
@@ -127,5 +263,85 @@
     width: 60%;
     height: 20%;
     margin-top: 20px;
+    border: 4px groove yellow;
+    border-radius: 5px;
+    background-color:   #9afe97;
 
+}
+
+.eyes-pic {
+    image-rendering: auto;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 20px;
+    float: left;
+    width: 15%;
+    height: 90px;
+    margin-bottom: -20px;
+    object-fit: cover;
+    overflow: hidden;
+    #object-position: right top;
+    #border: 1px solid black;
+}
+
+.eyes-pic:hover {
+    transform: translate(0, 5px);
+    transition: 0.3s;
+}
+
+#test {
+    image-rendering: auto;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    height: 10px;
+}
+
+
+
+.slidecontainer {
+    width: 40%; /* Width of the outside container */
+    float: left;
+    margin-left: 20px;
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+  margin-top: 20px;
+  margin-left: 45px;
+  
+}
+
+
+/* Mouse-over effects */
+.slider:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+    padding-top: 10px;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Cursor on hover */
 }

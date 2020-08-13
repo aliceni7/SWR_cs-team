@@ -7,8 +7,11 @@
   </head>
   <body>
     <div id="character-select" class="modal">
-      <h1 class="title">Customize Your Character</h1>
+      <!--
+      <button class="submit">Start!</button>
+      -->
       <center>
+	
 	<div class="div" id="skin">
 	  <span class="dot" id="#ffe0b4" style="background-color:#ffe0b4" onclick='select("#ffe0b4")'></span>
 	  <span class="dot" id="#f8d998" style="background-color:#f8d998" onclick='select("#f8d998")'></span>
@@ -17,15 +20,64 @@
 	  <span class="dot" id="#7f4422" style="background-color:#7f4422" onclick='select("#7f4422")'></span>
 	  <span class="dot" id="#5f3310" style="background-color:#5f3310" onclick='select("#5f3310")'></span>
 	</div>
-	<div class="div" id="avatar-display"> AVATAR DISPLAY</div>
-	<div class="div" id="hair-select">HAIR STYLES/COLORS</div>
-	<div class="div" id="clothes-select">CLOTHES STYLES/COLORS</div>
-	<div class="div" id="extra">EXTRA DIV IN CASE I FORGOT SOMETHING</div>
+	
+	<div class="div" id="avatar-display">
+	  <img class="avatar" id="skin-a" src="images/body/b1.png" />
+	  
+	  <img class="avatar" id="shirt-a" src="images/shirt/s1.png" />
+	  
+	  <img class="avatar" id="pants-a" src="images/pants/p1.png" />
+	  <img class="avatar" id="hair-a" src="images/hair/h1.png"/>
+	  <img class="avatar" id="eyes-a" src="images/eyes/e2.png" />
+	</div>
+	
+	<div class="div" id="hair-select">
+	  <img class="arrow" id="hair-back" src="images/arrowleft.png" onclick='switchHair("back")'/>
+	  <img class="hair-pic" id="current-hair" src="images/hair/h1.png" onclick='selectHair("images/hair/h1black.png")'/>
+	  <img class="arrow" id="hair-forward" src="images/arrowright.png" onclick='switchHair("forward")'/>
+	  
+	  <span class="hair-color" style="background-color:black" onclick='switchColor("black")'></span>
+	  <span class="hair-color" style="background-color:yellow" onclick='switchColor("blond")'></span>
+	  <span class="hair-color" style="background-color:brown" onclick='switchColor("brown")'></span>
+	</div>
+	
+	<div class="div" id="clothes-select">
+	  <img class="arrow" id="pants-back" src="images/arrowleft.png" onclick='switchShirt("back")'/>
+	  <img class="shirt-pic" id="current-shirt" src="images/shirt/s1.png" onclick='selectClothes("images/shirt/s1.png")'/>
+	  <img class="arrow" id="pants-forward" src="images/arrowright.png" onclick='switchShirt("forward")'/>
+	  
+	  <img class="arrow" id="pants-back" src="images/arrowleft.png" onclick='switchPants("back")'/>
+	  <img class="pants-pic" id="current-pants" src="images/pants/p1.png" onclick='selectClothes("images/pants/p1.png")'/>
+	  <img class="arrow" id="pants-forward" src="images/arrowright.png" onclick='switchPants("forward")' />
+
+	  <!--
+	  <div class="slidecontainer">
+	    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+	  </div>
+
+	  <div class="slidecontainer">
+	    <input type="range" min="1" max="100" value="50" class="slider" id="pants-slider">
+	  </div>
+	  -->
+
+	</div>
+	
+	<div class="div" id="extra">
+	  <img class="eyes-pic" src="images/eyes/e1.png" onclick='selectEyes("images/eyes/e1.png")' />
+	  <img class="eyes-pic" src="images/eyes/e2.png" onclick='selectEyes("images/eyes/e2.png")' />
+	  <img class="eyes-pic" src="images/eyes/e3.png" onclick='selectEyes("images/eyes/e3.png")' />
+	  <img class="eyes-pic" src="images/eyes/e4.png" onclick='selectEyes("images/eyes/e4.png")' />
+	  <img class="eyes-pic" src="images/eyes/e5.png" onclick='selectEyes("images/eyes/e5.png")' />
+	  <img class="eyes-pic" src="images/eyes/e6.png" onclick='selectEyes("images/eyes/e6.png")' />
+
+	</div>
       </center>
+      <canvas id="merge" style="display:none"></canvas>
+      <img id="test"></img>
       
     </div>
   </body>
   <script src="avatar.js" ></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+  <script src="https://unpkg.com/merge-images"></script>
 </html>
