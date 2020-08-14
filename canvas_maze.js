@@ -38,16 +38,17 @@ function getCursorPosition(canvas, event) {
 }
 
 function resizeMaze() {
+  var oldWidth = canvas.width;
+  var oldHeight = canvas.height;
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   cellWidth = canvas.width / (mazeCols + 1);
   cellHeight = canvas.height / (mazeRows + 1);
   widthOffset = cellWidth / 2;
   heightOffset = cellHeight / 2;
-
-  //console.log(cellHeight * .8);
   avatarWidth = parseInt(cellWidth * .8);
   avatarHeight = parseInt(cellHeight * .8);
+  avatarPosition(avatarX * canvas.width / oldWidth, avatarY * canvas.height / oldHeight);
   drawMaze();
 }
 
@@ -416,6 +417,15 @@ var velX = 0;
 var velY = 0;
 var keys = [];
 var maxSpeed = 4;
+
+// Returns the [COL, ROW] of where avatar is located
+function getAvatarPosition() {
+  var c = Math.floor((avatarX - widthOffset) / cellWidth);
+  var r = Math.floor((avatarY - heightOffset) / cellHeight);
+  console.log([avatarX, avatarY]);
+  console.log([c, r]);
+  return [c, r];
+}
 
 function avatarPosition(a, b) {
   avatarX = a;
