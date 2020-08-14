@@ -74,6 +74,7 @@ function generateMaze(r = defaultRows, c = defaultCols) {
   mazeGenBacktracking(r, c);
   mazeSolver(r, c);
   getPuzzleLocations();
+  makeEndModal();
   drawMaze();
 
   //console.log(maze);
@@ -435,6 +436,7 @@ function gameLoop() {
   //console.log(Math.round(avatarX), avatarY);
   if (velX || velY){
     displayPuzzleModal(checkOnPuzzle());
+    checkEnd();
   }
 
   ctx2.fillRect(avatarX, avatarY, avatarWidth, avatarHeight);
@@ -675,6 +677,17 @@ function checkOnPuzzle() {
   return -1;
 }
 
+// Returns true if avatar is on the endCell
+function checkEnd() {
+  if (checkInCell(endCell)){
+    var modal = document.getElementById('endModal');
+    var modalBtn = document.getElementById('endModalBtn');
+    if (modal.getAttribute("solved") === "false") {
+      openModal(modal, modalBtn);
+    }
+  }
+}
+
 function checkInCell(cell) {
   var leftBound = cell[COL] * cellWidth + widthOffset;
   var rightBound = (cell[COL] + 1) * cellWidth + widthOffset;
@@ -713,6 +726,7 @@ function makePuzzles() {
     modalHeader.appendChild(modalButton);
     var modalBody = document.createElement('DIV');
     modalBody.classList.add('modal-body');
+    modalBody.textContent = "Puzzle " + i;
     var puzzleCanvas = document.createElement('CANVAS');
     puzzleCanvas.id = 'puzzleCanvas' + i;
     // puzzleCanvas.style.resize = 'both';
@@ -727,6 +741,33 @@ function makePuzzles() {
   }
 }
 
+function makeEndModal() {
+  var body = document.getElementsByTagName('BODY')[0];
+  var modal = document.createElement('DIV');
+  modal.classList.add('modal');
+  modal.id = 'endModal';
+  modal.setAttribute('solved', false);
+  var modalContent = document.createElement('DIV');
+  modalContent.classList.add('modal-content');
+  var modalHeader = document.createElement('DIV');
+  modalHeader.classList.add('modal-header');
+  var modalButton = document.createElement('SPAN');
+  modalButton.classList.add('closeBtn');
+  modalButton.innerHTML = '&times;';
+  modalButton.id = 'endModalBtn';
+  modalHeader.appendChild(modalButton);
+  var modalBody = document.createElement('DIV');
+  modalBody.classList.add('modal-body');
+  modalBody.textContent = 'Great job! You solved the maze!';
+  var modalFooter = document.createElement('DIV');
+  modalFooter.classList.add('modal-footer');
+  modalContent.appendChild(modalHeader);
+  modalContent.appendChild(modalBody);
+  modalContent.appendChild(modalFooter);
+  modal.appendChild(modalContent);
+  body.appendChild(modal);
+}
+
 function removeElementsByClass(className) {
     var elements = document.getElementsByClassName(className);
     while(elements.length > 0){
@@ -735,14 +776,12 @@ function removeElementsByClass(className) {
 }
 
 //function to open modalBtn
-function openModal(modal, button, canvas) {
+function openModal(modal, button) {
   modal.style.display = 'block';
   modal.style.width = window.innerWidth +'px';
   modal.style.height = window.innerHeight +'px';
   button.addEventListener('click', closeModal);
   // button.style.display = 'block';
-  // canvas.style.height = window.innerWidth + 'px';
-  // canvas.style.height = window.innerHeight + 'px';
   currModal = modal;
 }
 
@@ -762,7 +801,9 @@ function displayPuzzleModal(index) {
     var canvas = document.getElementById(canvasId);
     console.log(modal.getAttribute("solved"));
     if (modal.getAttribute("solved") === "false") {
-      openModal(modal, button, canvas);
+      openModal(modal, button);
+      // canvas.style.height = window.innerWidth + 'px';
+      // canvas.style.height = window.innerHeight + 'px';
     }
   }
 }
