@@ -1,6 +1,7 @@
 var canvas = document.getElementById('canvas1', { alpha: false });
 var canvas2 = document.getElementById('canvas2', { alpha: false });
 var ctx = canvas.getContext('2d');
+var ctx2 = canvas2.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -426,8 +427,6 @@ function gameLoop() {
   if (!inModal){
     whatKey();
   }
-  var canvas2 = document.getElementById('canvas2');
-  var ctx2 = canvas2.getContext('2d');
   canvas2.width = window.innerWidth;
   canvas2.height = window.innerHeight;
 
@@ -824,6 +823,7 @@ character_select.style.display = "block";
 
 // Skin tone select
 var skin_select = document.getElementById("skin");
+var skin_route = '';
 
 var isFirst = true;
 function select(color) {
@@ -1657,6 +1657,25 @@ function selectAcc(ac) {
 }
 
 function start() {
+    /*
+    ctx2.clearRect(avatarX, avatarY, avatarWidth, avatarHeight);
+    var imageObj1 = new Image();
+    var imageObj2 = new Image();
+    var imageObj3 = new Image();
+    imageObj1.src = "images/hair/h12ginger.png";
+    imageObj1.onload = function() {
+	ctx2.drawImage(imageObj1, 0, 0, 100, 90);
+	imageObj2.src = "images/eyes/e2.png";
+	imageObj2.onload = function() {
+	    ctx2.drawImage(imageObj2, 0, 0, 100, 90);
+	}
+	imageObj3.src = "images/pants/p3.png";
+	imageObj3.onload = function() {
+	    ctx.drawImage(imageObj3, 0, 0, 100, 90);
+	    var img = canvas2.toDataURL("image/png");
+	    document.write('<img src="' + img + '" style="image-rendering:auto; image-rendering:crisp-edges; image-rendering:pixelated;" />');
+	}
+    };*/
     character_select.style = "none";
 }
 
