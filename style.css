@@ -131,5 +131,45 @@ table {
   background-color: red;
 }
 .puzzlecell {
-  background-color: blue; 
+  background-color: blue;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content{
+  background-color: #f4f4f4;
+  height: 100%;
+  width: 100%;
+}
+
+.closeBtn {
+  color: #ccc;
+  float: right;
+  z-index: 11;
+  position: relative;
+}
+.closeBtn: hover, .closeBtn: focus{
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+body {
+  margin: 0px;
+}
+#container {
+  position: relative;
+}
+canvas {
+  position: absolute;
+  border: 1px solid black;
 }
