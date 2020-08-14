@@ -25,6 +25,7 @@ var heightOffset = cellHeight / 2;
 var wallThickness = 8;
 var borderThickness = 10;
 var currModal;
+var inModal = false;
 
 /* Window Resizing */
 window.addEventListener('resize', resizeMaze);
@@ -422,7 +423,9 @@ function avatarPosition(a, b) {
 }
 
 function gameLoop() {
-  whatKey();
+  if (!inModal){
+    whatKey();
+  }
   var canvas2 = document.getElementById('canvas2');
   var ctx2 = canvas2.getContext('2d');
   canvas2.width = window.innerWidth;
@@ -783,11 +786,15 @@ function openModal(modal, button) {
   button.addEventListener('click', closeModal);
   // button.style.display = 'block';
   currModal = modal;
+  inModal = true;
+  velX = 0;
+  velY = 0;
 }
 
 function closeModal() {
   currModal.style.display = 'none';
   currModal.setAttribute("solved", true);
+  inModal = false;
 }
 
 
