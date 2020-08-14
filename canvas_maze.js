@@ -32,234 +32,236 @@ var inModal = false;
 window.addEventListener('resize', resizeMaze);
 
 function getCursorPosition(canvas, event) {
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  // console.log('x: ' + x + ' y: ' + y);
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    // console.log('x: ' + x + ' y: ' + y);
 }
 
 function resizeMaze() {
-  var oldWidth = canvas.width;
-  var oldHeight = canvas.height;
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  cellWidth = canvas.width / (mazeCols + 1);
-  cellHeight = canvas.height / (mazeRows + 1);
-  widthOffset = cellWidth / 2;
-  heightOffset = cellHeight / 2;
-  avatarWidth = parseInt(cellWidth * .8);
-  avatarHeight = parseInt(cellHeight * .8);
-  avatarPosition(avatarX * canvas.width / oldWidth, avatarY * canvas.height / oldHeight);
-  drawMaze();
+    var oldWidth = canvas.width;
+    var oldHeight = canvas.height;
+    canvas.width = window.innerWidth / 2;
+    canvas.height = window.innerHeight;
+    cellWidth = canvas.width / (mazeCols + 1);
+    cellHeight = canvas.height / (mazeRows + 1);
+    widthOffset = cellWidth / 2;
+    heightOffset = cellHeight / 2;
+    avatarWidth = parseInt(cellWidth * .8);
+    avatarHeight = parseInt(cellHeight * .8);
+    avatarPosition(avatarX * canvas.width / oldWidth, avatarY * canvas.height / oldHeight);
+    drawMaze();
 }
 
 function init() {
-  generateMaze();
-  gameLoop();
-  canvas2.addEventListener('click', function (e) { getCursorPosition(canvas, e); }, false);
+    generateMaze();
+    gameLoop();
+    canvas2.addEventListener('click', function (e) { getCursorPosition(canvas, e); }, false);
 }
 
 var form = document.querySelector('form');
 form.onsubmit = function () {
-  mazeRows = parseInt(form.maze_rows.value);
-  mazeCols = parseInt(form.maze_cols.value);
-  removeElementsByClass('modal');
-  generateMaze(mazeRows, mazeCols);
-  resizeMaze();
+    mazeRows = parseInt(form.maze_rows.value);
+    mazeCols = parseInt(form.maze_cols.value);
+    removeElementsByClass('modal');
+    generateMaze(mazeRows, mazeCols);
+    resizeMaze();
 
-  //positions avatar at the start cell
-  avatarPosition(startCell[COL] * cellWidth + cellWidth * 0.6, startCell[ROW] * cellHeight + cellHeight * 0.6);
-  return false;
+    //positions avatar at the start cell
+    avatarPosition(startCell[COL] * cellWidth + cellWidth * 0.6, startCell[ROW] * cellHeight + cellHeight * 0.6);
+    return false;
 };
 
 function generateMaze(r = defaultRows, c = defaultCols) {
-  makeBlankMaze(r, c);
-  mazeGenBacktracking(r, c);
-  mazeSolver(r, c);
-  getPuzzleLocations();
-  makeEndModal();
-  drawMaze();
+    makeBlankMaze(r, c);
+    mazeGenBacktracking(r, c);
+    mazeSolver(r, c);
+    getPuzzleLocations();
+    makeEndModal();
+    drawMaze();
 
-  //console.log(maze);
-  //positions avatar at the start cell
-  avatarPosition(startCell[COL] * cellWidth + cellWidth * 0.6, startCell[ROW] * cellHeight + cellHeight * 0.6);
+    //console.log(maze);
+    //positions avatar at the start cell
+    avatarPosition(startCell[COL] * cellWidth + cellWidth * 0.6, startCell[ROW] * cellHeight + cellHeight * 0.6);
 }
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
 function makeBlankMaze(rows = defaultRows, cols = defaultCols) {
-  maze = [];
-  for (var c = 0; c < cols; c++) {
-    maze.push([]);
-    for (var r = 0; r < rows; r++) {
-      maze[c].push({});
+    maze = [];
+    for (var c = 0; c < cols; c++) {
+	maze.push([]);
+	for (var r = 0; r < rows; r++) {
+	    maze[c].push({});
+	}
     }
-  }
 
-  fillWalls(rows, cols);
-  return makeStartEndCells(rows, cols);
+    fillWalls(rows, cols);
+    return makeStartEndCells(rows, cols);
 }
 
 // Fills the maze with walls and borders
 function fillWalls(rows = defaultRows, cols = defaultCols) {
-  for (var c = 0; c < cols; c++) {
-    for (var r = 0; r < rows; r++) {
-      maze[c][r].walls = ['top', 'bot', 'left', 'right'];
-      maze[c][r].borders = [];
-      if (r === 0) {
-        maze[c][r].borders.push('top');
-      }
+    for (var c = 0; c < cols; c++) {
+	for (var r = 0; r < rows; r++) {
+	    maze[c][r].walls = ['top', 'bot', 'left', 'right'];
+	    maze[c][r].borders = [];
+	    if (r === 0) {
+		maze[c][r].borders.push('top');
+	    }
 
-      if (r === maze[c].length - 1) {
-        maze[c][r].borders.push('bot');
-      }
+	    if (r === maze[c].length - 1) {
+		maze[c][r].borders.push('bot');
+	    }
 
-      if (c === 0) {
-        maze[c][r].borders.push('left');
-      }
+	    if (c === 0) {
+		maze[c][r].borders.push('left');
+	    }
 
-      if (c === maze.length - 1) {
-        maze[c][r].borders.push('right');
-      }
+	    if (c === maze.length - 1) {
+		maze[c][r].borders.push('right');
+	    }
+	}
     }
-  }
 }
 
 // Draws the maze on canvas
 function drawMaze() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  displayStartEnd();
-  displayPuzzleLocations();
-  drawWalls();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    displayStartEnd();
+    displayPuzzleLocations();
+    drawWalls();
 }
 
 // Draws the walls on the canvas
 function drawWalls() {
-  /* Coordinates for a cell
-    top left corner: (c * cellWidth, r * cellHeight)
-    top right corner: (c * cellWidth + cellWidth, r * cellHeight)
-    bot left corner: (c * cellWidth, r * cellHeight + cellHeight)
-    bot right corner: (c * cellWidth + cellWidth, r * cellHeight + cellHeight)
-  */
-  var rows = maze[0].length;
-  var cols = maze.length;
-  for (var c = 0; c < maze.length; c++) {
-    for (var r = 0; r < maze[c].length; r++) {
-      var topLeft = [c * cellWidth, r * cellHeight];
-      ctx.beginPath();
-      ctx.lineWidth = wallThickness;
+    /* Coordinates for a cell
+       top left corner: (c * cellWidth, r * cellHeight)
+       top right corner: (c * cellWidth + cellWidth, r * cellHeight)
+       bot left corner: (c * cellWidth, r * cellHeight + cellHeight)
+       bot right corner: (c * cellWidth + cellWidth, r * cellHeight + cellHeight)
+    */
+    var rows = maze[0].length;
+    var cols = maze.length;
+    for (var c = 0; c < maze.length; c++) {
+	for (var r = 0; r < maze[c].length; r++) {
+	    var topLeft = [c * cellWidth, r * cellHeight];
+	    ctx.beginPath();
+	    ctx.strokeStyle = 'orange';
+	    ctx.lineWidth = wallThickness;
 
-      // Draws the top border
-      if (maze[c][r].walls.indexOf('top') > -1) {
-        if (maze[c][r].borders.indexOf('top') > -1) {
-          ctx.lineWidth = borderThickness;
-        }
+	    // Draws the top border
+	    if (maze[c][r].walls.indexOf('top') > -1) {
+		if (maze[c][r].borders.indexOf('top') > -1) {
+		    ctx.lineWidth = borderThickness;
+		}
 
-        ctx.moveTo(topLeft[0] + widthOffset - ctx.lineWidth / 2, topLeft[1] + heightOffset);
-        ctx.lineTo(topLeft[0] + cellWidth + widthOffset + ctx.lineWidth / 2, topLeft[1] + heightOffset);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.lineWidth = wallThickness;
-      }
+		ctx.moveTo(topLeft[0] + widthOffset - ctx.lineWidth / 2, topLeft[1] + heightOffset);
+		ctx.lineTo(topLeft[0] + cellWidth + widthOffset + ctx.lineWidth / 2, topLeft[1] + heightOffset);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.strokeStyle = 'orange';
+		ctx.lineWidth = wallThickness;
+	    }
 
-      // Draws the bottom border
-      if (maze[c][r].walls.indexOf('bot') > -1) {
-        if (maze[c][r].borders.indexOf('bot') > -1) {
-          ctx.lineWidth = borderThickness;
-        }
+	    // Draws the bottom border
+	    if (maze[c][r].walls.indexOf('bot') > -1) {
+		if (maze[c][r].borders.indexOf('bot') > -1) {
+		    ctx.lineWidth = borderThickness;
+		}
 
-        ctx.moveTo(topLeft[0] + widthOffset - ctx.lineWidth / 2, topLeft[1] + cellHeight + heightOffset);
-        ctx.lineTo(topLeft[0] + cellWidth + widthOffset + ctx.lineWidth / 2, topLeft[1] + cellHeight + heightOffset);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.lineWidth = wallThickness;
-      }
+		ctx.moveTo(topLeft[0] + widthOffset - ctx.lineWidth / 2, topLeft[1] + cellHeight + heightOffset);
+		ctx.lineTo(topLeft[0] + cellWidth + widthOffset + ctx.lineWidth / 2, topLeft[1] + cellHeight + heightOffset);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.lineWidth = wallThickness;
+	    }
 
-      // Draws the left border
-      if (maze[c][r].walls.indexOf('left') > -1) {
-        if (maze[c][r].borders.indexOf('left') > -1) {
-          ctx.lineWidth = borderThickness;
-        }
+	    // Draws the left border
+	    if (maze[c][r].walls.indexOf('left') > -1) {
+		if (maze[c][r].borders.indexOf('left') > -1) {
+		    ctx.lineWidth = borderThickness;
+		}
 
-        ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset - ctx.lineWidth / 2);
-        ctx.lineTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset + ctx.lineWidth / 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.lineWidth = wallThickness;
-      }
+		ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset - ctx.lineWidth / 2);
+		ctx.lineTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset + ctx.lineWidth / 2);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.lineWidth = wallThickness;
+	    }
 
-      // Draws the right border
-      if (maze[c][r].walls.indexOf('right') > -1) {
-        if (maze[c][r].borders.indexOf('right') > -1) {
-          ctx.lineWidth = borderThickness;
-        }
+	    // Draws the right border
+	    if (maze[c][r].walls.indexOf('right') > -1) {
+		if (maze[c][r].borders.indexOf('right') > -1) {
+		    ctx.lineWidth = borderThickness;
+		}
 
-        ctx.moveTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset - ctx.lineWidth / 2);
-        ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset + ctx.lineWidth / 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.lineWidth = wallThickness;
-      }
+		ctx.moveTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset - ctx.lineWidth / 2);
+		ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset + ctx.lineWidth / 2);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.lineWidth = wallThickness;
+	    }
+	}
     }
-  }
 }
 
 function displayStartEnd() {
-  ctx.fillStyle = 'rgba(20, 255, 20, 0.8)';
-  ctx.fillRect(startCell[COL] * cellWidth + widthOffset, startCell[ROW] * cellHeight + heightOffset, cellWidth, cellHeight);
-  ctx.fillStyle = 'rgba(255, 0, 20, 0.8)';
-  ctx.fillRect(endCell[COL] * cellWidth + widthOffset, endCell[ROW] * cellHeight + heightOffset, cellWidth, cellHeight);
+    ctx.fillStyle = 'rgba(20, 255, 20, 0.8)';
+    ctx.fillRect(startCell[COL] * cellWidth + widthOffset, startCell[ROW] * cellHeight + heightOffset, cellWidth, cellHeight);
+    ctx.fillStyle = 'rgba(255, 0, 20, 0.8)';
+    ctx.fillRect(endCell[COL] * cellWidth + widthOffset, endCell[ROW] * cellHeight + heightOffset, cellWidth, cellHeight);
 }
 
 // Returns a random integer between 0 and the given maximum (noninclusive) parameter
 function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
+    return Math.floor(Math.random() * Math.floor(max));
 }
 
 // Determines startCell and endCell
 function makeStartEndCells(rows = defaultRows, cols = defaultCols) {
-  var mazeOrient = getRandomInt(4);
-  var tempIdx;
-  switch (mazeOrient){
+    var mazeOrient = getRandomInt(4);
+    var tempIdx;
+    switch (mazeOrient){
     case 0: //start left end right
-      startCell = [0, getRandomInt(rows)];
-      tempIdx = maze[startCell[COL]][startCell[ROW]].walls.indexOf('left');
-      maze[startCell[COL]][startCell[ROW]].walls.splice(tempIdx, 1);
+	startCell = [0, getRandomInt(rows)];
+	tempIdx = maze[startCell[COL]][startCell[ROW]].walls.indexOf('left');
+	maze[startCell[COL]][startCell[ROW]].walls.splice(tempIdx, 1);
 
-      endCell = [cols - 1, getRandomInt(rows)];
-      tempIdx = maze[endCell[COL]][endCell[ROW]].walls.indexOf('right');
-      maze[endCell[COL]][endCell[ROW]].walls.splice(tempIdx, 1);
-      break;
+	endCell = [cols - 1, getRandomInt(rows)];
+	tempIdx = maze[endCell[COL]][endCell[ROW]].walls.indexOf('right');
+	maze[endCell[COL]][endCell[ROW]].walls.splice(tempIdx, 1);
+	break;
     case 1: // start right end left
-      startCell = [cols - 1, getRandomInt(rows)];
-      tempIdx = maze[startCell[COL]][startCell[ROW]].walls.indexOf('right');
-      maze[startCell[COL]][startCell[ROW]].walls.splice(tempIdx, 1);
+	startCell = [cols - 1, getRandomInt(rows)];
+	tempIdx = maze[startCell[COL]][startCell[ROW]].walls.indexOf('right');
+	maze[startCell[COL]][startCell[ROW]].walls.splice(tempIdx, 1);
 
-      endCell = [0, getRandomInt(rows)];
-      tempIdx = maze[endCell[COL]][endCell[ROW]].walls.indexOf('left');
-      maze[endCell[COL]][endCell[ROW]].walls.splice(tempIdx, 1);
-      break;
+	endCell = [0, getRandomInt(rows)];
+	tempIdx = maze[endCell[COL]][endCell[ROW]].walls.indexOf('left');
+	maze[endCell[COL]][endCell[ROW]].walls.splice(tempIdx, 1);
+	break;
     case 2: //start top end bot
-      startCell = [getRandomInt(cols), 0];
-      tempIdx = maze[startCell[COL]][startCell[ROW]].walls.indexOf('top');
-      maze[startCell[COL]][startCell[ROW]].walls.splice(tempIdx, 1);
+	startCell = [getRandomInt(cols), 0];
+	tempIdx = maze[startCell[COL]][startCell[ROW]].walls.indexOf('top');
+	maze[startCell[COL]][startCell[ROW]].walls.splice(tempIdx, 1);
 
-      endCell = [getRandomInt(cols), rows - 1];
-      tempIdx = maze[endCell[COL]][endCell[ROW]].walls.indexOf('bot');
-      maze[endCell[COL]][endCell[ROW]].walls.splice(tempIdx, 1);
-      break;
+	endCell = [getRandomInt(cols), rows - 1];
+	tempIdx = maze[endCell[COL]][endCell[ROW]].walls.indexOf('bot');
+	maze[endCell[COL]][endCell[ROW]].walls.splice(tempIdx, 1);
+	break;
     default: // start bot end top
-      startCell = [getRandomInt(cols), rows - 1];
-      tempIdx = maze[startCell[COL]][startCell[ROW]].walls.indexOf('bot');
-      maze[startCell[COL]][startCell[ROW]].walls.splice(tempIdx, 1);
+	startCell = [getRandomInt(cols), rows - 1];
+	tempIdx = maze[startCell[COL]][startCell[ROW]].walls.indexOf('bot');
+	maze[startCell[COL]][startCell[ROW]].walls.splice(tempIdx, 1);
 
-      endCell = [getRandomInt(cols), 0];
-      tempIdx = maze[endCell[COL]][endCell[ROW]].walls.indexOf('top');
-      maze[endCell[COL]][endCell[ROW]].walls.splice(tempIdx, 1);
-      break;
-  }
+	endCell = [getRandomInt(cols), 0];
+	tempIdx = maze[endCell[COL]][endCell[ROW]].walls.indexOf('top');
+	maze[endCell[COL]][endCell[ROW]].walls.splice(tempIdx, 1);
+	break;
+    }
 
-  // console.log(startCell);
-  // console.log(endCell);
+    // console.log(startCell);
+    // console.log(endCell);
 }
 
 /* Pseudocode
@@ -273,144 +275,144 @@ function makeStartEndCells(rows = defaultRows, cols = defaultCols) {
    Mark the chosen cell as visited and push it to the stack
 */
 function mazeGenBacktracking(rows = defaultRows, cols = defaultCols) {
-  var stack = [];
-  var visited = makeArray(rows, cols, false);
-  stack.push(startCell);
-  visited[startCell[COL]][startCell[ROW]] = true;
-  backtrackGenHelper(stack, visited, maze);
+    var stack = [];
+    var visited = makeArray(rows, cols, false);
+    stack.push(startCell);
+    visited[startCell[COL]][startCell[ROW]] = true;
+    backtrackGenHelper(stack, visited, maze);
 }
 
 function backtrackGenHelper(stack, visited, maze) {
-  while (stack.length !== 0) {
-    var curr = stack.pop();
-    var unvisited = unvisitedNeighbors(curr, visited);
-    if (unvisited.length !== 0) {
-      stack.push(curr);
+    while (stack.length !== 0) {
+	var curr = stack.pop();
+	var unvisited = unvisitedNeighbors(curr, visited);
+	if (unvisited.length !== 0) {
+	    stack.push(curr);
 
-      //Choose one of unvisited neighbors
-      var next = unvisited[getRandomInt(unvisited.length)];
-      removeWall(curr, next);
-      visited[next[COL]][next[ROW]] = true;
-      stack.push(next);
+	    //Choose one of unvisited neighbors
+	    var next = unvisited[getRandomInt(unvisited.length)];
+	    removeWall(curr, next);
+	    visited[next[COL]][next[ROW]] = true;
+	    stack.push(next);
+	}
     }
-  }
 }
 
 // Returns a rows by cols sized array filled with fillValue
 function makeArray(rows, cols, fillValue) {
-  var temp = [];
-  for (var c = 0; c < cols; c++) {
-    temp.push([]);
-    for (var r = 0; r < rows; r++) {
-      temp[c].push(fillValue);
+    var temp = [];
+    for (var c = 0; c < cols; c++) {
+	temp.push([]);
+	for (var r = 0; r < rows; r++) {
+	    temp[c].push(fillValue);
+	}
     }
-  }
 
-  return temp;
+    return temp;
 }
 
 // Takes two cells and removes the adjacent wall. Doesn't return anything.
 function removeWall(start, end) {
-  var relativePosition = [end[COL] - start[COL], end[ROW] - start[ROW]];
-  var tempIdx;
-  switch (relativePosition.join(' ')){
-  // start is on top of end
-  case '0 1':
-    tempIdx = maze[start[COL]][start[ROW]].walls.indexOf('bot');
-    maze[start[COL]][start[ROW]].walls.splice(tempIdx, 1);
+    var relativePosition = [end[COL] - start[COL], end[ROW] - start[ROW]];
+    var tempIdx;
+    switch (relativePosition.join(' ')){
+	// start is on top of end
+    case '0 1':
+	tempIdx = maze[start[COL]][start[ROW]].walls.indexOf('bot');
+	maze[start[COL]][start[ROW]].walls.splice(tempIdx, 1);
 
-    tempIdx = maze[end[COL]][end[ROW]].walls.indexOf('top');
-    maze[end[COL]][end[ROW]].walls.splice(tempIdx, 1);
-    break;
+	tempIdx = maze[end[COL]][end[ROW]].walls.indexOf('top');
+	maze[end[COL]][end[ROW]].walls.splice(tempIdx, 1);
+	break;
 
-  // start is below end
-  case '0 -1':
-    tempIdx = maze[start[COL]][start[ROW]].walls.indexOf('top');
-    maze[start[COL]][start[ROW]].walls.splice(tempIdx, 1);
+	// start is below end
+    case '0 -1':
+	tempIdx = maze[start[COL]][start[ROW]].walls.indexOf('top');
+	maze[start[COL]][start[ROW]].walls.splice(tempIdx, 1);
 
-    tempIdx = maze[end[COL]][end[ROW]].walls.indexOf('bot');
-    maze[end[COL]][end[ROW]].walls.splice(tempIdx, 1);
-    break;
+	tempIdx = maze[end[COL]][end[ROW]].walls.indexOf('bot');
+	maze[end[COL]][end[ROW]].walls.splice(tempIdx, 1);
+	break;
 
-  // start is to the left of end
-  case '1 0':
-    tempIdx = maze[start[COL]][start[ROW]].walls.indexOf('right');
-    maze[start[COL]][start[ROW]].walls.splice(tempIdx, 1);
+	// start is to the left of end
+    case '1 0':
+	tempIdx = maze[start[COL]][start[ROW]].walls.indexOf('right');
+	maze[start[COL]][start[ROW]].walls.splice(tempIdx, 1);
 
-    tempIdx = maze[end[COL]][end[ROW]].walls.indexOf('left');
-    maze[end[COL]][end[ROW]].walls.splice(tempIdx, 1);
-    break;
+	tempIdx = maze[end[COL]][end[ROW]].walls.indexOf('left');
+	maze[end[COL]][end[ROW]].walls.splice(tempIdx, 1);
+	break;
 
-  // start is to the right of end
-  case '-1 0':
-    tempIdx = maze[start[COL]][start[ROW]].walls.indexOf('left');
-    maze[start[COL]][start[ROW]].walls.splice(tempIdx, 1);
+	// start is to the right of end
+    case '-1 0':
+	tempIdx = maze[start[COL]][start[ROW]].walls.indexOf('left');
+	maze[start[COL]][start[ROW]].walls.splice(tempIdx, 1);
 
-    tempIdx = maze[end[COL]][end[ROW]].walls.indexOf('right');
-    maze[end[COL]][end[ROW]].walls.splice(tempIdx, 1);
-    break;
-}
+	tempIdx = maze[end[COL]][end[ROW]].walls.indexOf('right');
+	maze[end[COL]][end[ROW]].walls.splice(tempIdx, 1);
+	break;
+    }
 }
 
 // Returns an array of unvisited neighboring cells
 function unvisitedNeighbors(cell, visited) {
-  var unvisited = [];
-  var tempCell;
-  var currRow = cell[ROW];
-  var currCol = cell[COL];
+    var unvisited = [];
+    var tempCell;
+    var currRow = cell[ROW];
+    var currCol = cell[COL];
 
-  // Check cell on top
-  if (currRow !== 0) {
-    if (!visited[currCol][currRow - 1]) {
-      tempCell = [currCol, currRow - 1];
-      unvisited.push(tempCell);
+    // Check cell on top
+    if (currRow !== 0) {
+	if (!visited[currCol][currRow - 1]) {
+	    tempCell = [currCol, currRow - 1];
+	    unvisited.push(tempCell);
+	}
     }
-  }
 
-  // Check cell below
-  if (currRow !== visited[currCol].length - 1) {
-    if (!visited[currCol][currRow + 1]) {
-      tempCell = [currCol, currRow + 1];
-      unvisited.push(tempCell);
+    // Check cell below
+    if (currRow !== visited[currCol].length - 1) {
+	if (!visited[currCol][currRow + 1]) {
+	    tempCell = [currCol, currRow + 1];
+	    unvisited.push(tempCell);
+	}
     }
-  }
 
-  // Check cell to left
-  if (currCol !== 0) {
-    if (!visited[currCol - 1][currRow]) {
-      tempCell = [currCol - 1, currRow];
-      unvisited.push(tempCell);
+    // Check cell to left
+    if (currCol !== 0) {
+	if (!visited[currCol - 1][currRow]) {
+	    tempCell = [currCol - 1, currRow];
+	    unvisited.push(tempCell);
+	}
     }
-  }
 
-  // Check cell to right
-  if (currCol !== visited.length - 1) {
-    if (!visited[currCol + 1][currRow]) {
-      tempCell = [currCol + 1, currRow];
-      unvisited.push(tempCell);
+    // Check cell to right
+    if (currCol !== visited.length - 1) {
+	if (!visited[currCol + 1][currRow]) {
+	    tempCell = [currCol + 1, currRow];
+	    unvisited.push(tempCell);
+	}
     }
-  }
 
-  return unvisited;
+    return unvisited;
 }
 
 (function () {
-  var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-  window.requestAnimationFrame = requestAnimationFrame;
+    var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    window.requestAnimationFrame = requestAnimationFrame;
 })();
 
 window.addEventListener('keydown', function (e) {
     e.preventDefault();
     keys[e.keyCode] = true;
-  }
-);
+}
+		       );
 
 window.addEventListener('keyup', function (e) {
     velX = 0;
     velY = 0;
     keys[e.keyCode] = false;
-  }
-);
+}
+		       );
 
 var avatarX = 400;
 var avatarY = 300;
@@ -421,233 +423,233 @@ var maxSpeed = 4;
 
 // Returns the [COL, ROW] of where avatar is located
 function getAvatarPosition() {
-  var c = Math.floor((avatarX - widthOffset) / cellWidth);
-  var r = Math.floor((avatarY - heightOffset) / cellHeight);
-  console.log([avatarX, avatarY]);
-  console.log([c, r]);
-  return [c, r];
+    var c = Math.floor((avatarX - widthOffset) / cellWidth);
+    var r = Math.floor((avatarY - heightOffset) / cellHeight);
+    console.log([avatarX, avatarY]);
+    console.log([c, r]);
+    return [c, r];
 }
 
 function avatarPosition(a, b) {
-  avatarX = a;
-  avatarY = b;
+    avatarX = a;
+    avatarY = b;
 }
 
 function gameLoop() {
-  if (!inModal){
-    whatKey();
-  }
-  canvas2.width = window.innerWidth;
-  canvas2.height = window.innerHeight;
+    if (!inModal){
+	whatKey();
+    }
+    canvas2.width = window.innerWidth;
+    canvas2.height = window.innerHeight;
 
-  avatarX += velX;
-  Math.round(avatarX);
-  avatarY += velY;
-  Math.round(avatarY);
+    avatarX += velX;
+    Math.round(avatarX);
+    avatarY += velY;
+    Math.round(avatarY);
 
-  //console.log(Math.round(avatarX), avatarY);
-  if (velX || velY){
-    displayPuzzleModal(checkOnPuzzle());
-    checkEnd();
-  }
+    //console.log(Math.round(avatarX), avatarY);
+    if (velX || velY){
+	displayPuzzleModal(checkOnPuzzle());
+	checkEnd();
+    }
 
-  ctx2.fillRect(avatarX, avatarY, avatarWidth, avatarHeight);
-  requestAnimationFrame(gameLoop);
+    ctx2.fillRect(avatarX, avatarY, avatarHeight, avatarHeight);
+    requestAnimationFrame(gameLoop);
 }
 
 function arraysEqual(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (a.length !== b.length) return false;
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
 
-  // If you don't care about the order of the elements inside
-  // the array, you should sort both arrays here.
-  // Please note that calling sort on an array will modify that array.
-  // you might want to clone your array first.
+    // If you don't care about the order of the elements inside
+    // the array, you should sort both arrays here.
+    // Please note that calling sort on an array will modify that array.
+    // you might want to clone your array first.
 
-  for (var i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) return false;
-  }
+    for (var i = 0; i < a.length; ++i) {
+	if (a[i] !== b[i]) return false;
+    }
 
-  return true;
+    return true;
 }
 
-function checkEquality(pix, colorArray = [0, 0, 0, 255]) {
-  for (j = 0; j < pix.length; j++) {
-    if (arraysEqual(pix[j], colorArray)) { return true; }
-    // if (arraysEqual(pix[j], [0, 0, 0, 255])) { return true; }
-  }
+function checkEquality(pix, colorArray = [255, 165, 0, 255]) {
+    for (j = 0; j < pix.length; j++) {
+	if (arraysEqual(pix[j], colorArray)) { return true; }
+	// if (arraysEqual(pix[j], [0, 0, 0, 255])) { return true; }
+    }
 
-  return false;
+    return false;
 }
 
 function whatKey() {
-  if (keys[37]) {
-    //velX = -4;  left key
-    const leftSide = [];
-    for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
-      leftSide.push(canvas.getContext('2d').getImageData(avatarX, avatarY + i, 1, 1).data);
+    if (keys[37]) {
+	//velX = -4;  left key
+	const leftSide = [];
+	for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
+	    leftSide.push(canvas.getContext('2d').getImageData(avatarX, avatarY + i, 1, 1).data);
+	}
+
+	if (avatarX < 0 || checkEquality(leftSide)) {
+	    velX = 0;
+	    velY = 0;
+	} else if (velX > -maxSpeed) {
+	    velX -= 1.0;
+	}
     }
 
-    if (avatarX < 0 || checkEquality(leftSide)) {
-      velX = 0;
-      velY = 0;
-    } else if (velX > -maxSpeed) {
-      velX -= 1.0;
-    }
-  }
+    if (keys[39]) {
+	//velX = 4;  right key
+	const rightSide = [];
+	for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
+	    rightSide.push(canvas.getContext('2d').getImageData(avatarX + avatarHeight, avatarY + i, 1, 1).data);
+	}
 
-  if (keys[39]) {
-    //velX = 4;  right key
-    const rightSide = [];
-    for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
-      rightSide.push(canvas.getContext('2d').getImageData(avatarX + avatarWidth, avatarY + i, 1, 1).data);
-    }
-
-    // console.log(rightSide);
-    if (avatarX > canvas.width - avatarWidth || checkEquality(rightSide)) {
-      velX = 0;
-      velY = 0;
-    } else if (velX < maxSpeed) {
-      velX += 1.0;
-    }
-  }
-
-  if (keys[40]) {
-    //velY = 4;  down key
-    const bottomSide = [];
-    for (i = wallThickness; i < avatarWidth - wallThickness; i++) {
-      bottomSide.push(canvas.getContext('2d').getImageData(avatarX + i, avatarY + avatarHeight, 1, 1).data);
+	// console.log(rightSide);
+	if (avatarX > canvas.width - avatarHeight || checkEquality(rightSide)) {
+	    velX = 0;
+	    velY = 0;
+	} else if (velX < maxSpeed) {
+	    velX += 1.0;
+	}
     }
 
-    if (avatarY > canvas.height - avatarHeight || checkEquality(bottomSide)) {
-      velX = 0;
-      velY = 0;
-    } else if (velY < maxSpeed) {
-      velY += 1.0;
-    }
-  }
+    if (keys[40]) {
+	//velY = 4;  down key
+	const bottomSide = [];
+	for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
+	    bottomSide.push(canvas.getContext('2d').getImageData(avatarX + i, avatarY + avatarHeight, 1, 1).data);
+	}
 
-  if (keys[38]) {
-    //velY = 4;  up key
-    const topSide = [];
-    for (i = wallThickness; i < avatarWidth - wallThickness; i++) {
-      topSide.push(canvas.getContext('2d').getImageData(avatarX + i, avatarY, 1, 1).data);
+	if (avatarY > canvas.height - avatarHeight || checkEquality(bottomSide)) {
+	    velX = 0;
+	    velY = 0;
+	} else if (velY < maxSpeed) {
+	    velY += 1.0;
+	}
     }
 
-    if (avatarY < 0 || checkEquality(topSide)) {
-      velX = 0;
-      velY = 0;
-    } else if (velY > -maxSpeed) {
-      velY -= 1.0;
+    if (keys[38]) {
+	//velY = 4;  up key
+	const topSide = [];
+	for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
+	    topSide.push(canvas.getContext('2d').getImageData(avatarX + i, avatarY, 1, 1).data);
+	}
+
+	if (avatarY < 0 || checkEquality(topSide)) {
+	    velX = 0;
+	    velY = 0;
+	} else if (velY > -maxSpeed) {
+	    velY -= 1.0;
+	}
     }
-  }
 }
 
 /* Returns an array containing the cells in sequential order from start to end
    making up the path through the maze */
 function mazeSolver(rows = defaultRows, cols = defaultCols) {
-  var stack = [];
-  var visited = makeArray(rows, cols, false);
-  stack.push(startCell);
-  visited[startCell[COL]][startCell[ROW]] = true;
-  solvePath = solveHelper(stack, visited, maze);
-  console.log(solvePath);
+    var stack = [];
+    var visited = makeArray(rows, cols, false);
+    stack.push(startCell);
+    visited[startCell[COL]][startCell[ROW]] = true;
+    solvePath = solveHelper(stack, visited, maze);
+    console.log(solvePath);
 }
 
 function solveHelper(stack, visited, maze) {
-  while (stack.length !== 0) {
-    var curr = stack.pop();
-    var validNeighbors = noWallUnvisitedNeighbors(curr, visited);
-    if (validNeighbors.length !== 0) {
-      stack.push(curr);
+    while (stack.length !== 0) {
+	var curr = stack.pop();
+	var validNeighbors = noWallUnvisitedNeighbors(curr, visited);
+	if (validNeighbors.length !== 0) {
+	    stack.push(curr);
 
-      //Choose one of valid neighbors
-      var next = validNeighbors[getRandomInt(validNeighbors.length)];
-      visited[next[COL]][next[ROW]] = true;
-      stack.push(next);
-      if (next[ROW] === endCell[ROW] && next[COL] === endCell[COL]) {
-        return stack;
-      }
+	    //Choose one of valid neighbors
+	    var next = validNeighbors[getRandomInt(validNeighbors.length)];
+	    visited[next[COL]][next[ROW]] = true;
+	    stack.push(next);
+	    if (next[ROW] === endCell[ROW] && next[COL] === endCell[COL]) {
+		return stack;
+	    }
+	}
     }
-  }
 }
 
 // Returns an array of cells neighboring the selected cell that have no wall in between
 // and is unvisited
 function noWallUnvisitedNeighbors(cell, visited) {
-  var validNeighbors = [];
-  var tempCell;
-  var currRow = cell[ROW];
-  var currCol = cell[COL];
+    var validNeighbors = [];
+    var tempCell;
+    var currRow = cell[ROW];
+    var currCol = cell[COL];
 
-  // Check cell on top
-  if (currRow !== 0 && maze[currCol][currRow].walls.indexOf('top') === -1) {
-    tempCell = [currCol, currRow - 1];
-    if (!visited[currCol][currRow - 1]) {
-      validNeighbors.push(tempCell);
+    // Check cell on top
+    if (currRow !== 0 && maze[currCol][currRow].walls.indexOf('top') === -1) {
+	tempCell = [currCol, currRow - 1];
+	if (!visited[currCol][currRow - 1]) {
+	    validNeighbors.push(tempCell);
+	}
     }
-  }
 
-  // Check cell below
-  if (currRow !== visited[currCol].length - 1 && maze[currCol][currRow].walls.indexOf('bot') === -1) {
-    tempCell = [currCol, currRow + 1];
-    if (!visited[currCol][currRow + 1]) {
-      validNeighbors.push(tempCell);
+    // Check cell below
+    if (currRow !== visited[currCol].length - 1 && maze[currCol][currRow].walls.indexOf('bot') === -1) {
+	tempCell = [currCol, currRow + 1];
+	if (!visited[currCol][currRow + 1]) {
+	    validNeighbors.push(tempCell);
+	}
     }
-  }
 
-  // Check cell to left
-  if (currCol !== 0 && maze[currCol][currRow].walls.indexOf('left') === -1) {
-    tempCell = [currCol - 1, currRow];
-    if (!visited[currCol - 1][currRow]) {
-      validNeighbors.push(tempCell);
+    // Check cell to left
+    if (currCol !== 0 && maze[currCol][currRow].walls.indexOf('left') === -1) {
+	tempCell = [currCol - 1, currRow];
+	if (!visited[currCol - 1][currRow]) {
+	    validNeighbors.push(tempCell);
+	}
     }
-  }
 
-  // Check cell to right
-  if (currCol !== visited.length - 1 && maze[currCol][currRow].walls.indexOf('right') === -1) {
-    tempCell = [currCol + 1, currRow];
-    if (!visited[currCol + 1][currRow]) {
-      validNeighbors.push(tempCell);
+    // Check cell to right
+    if (currCol !== visited.length - 1 && maze[currCol][currRow].walls.indexOf('right') === -1) {
+	tempCell = [currCol + 1, currRow];
+	if (!visited[currCol + 1][currRow]) {
+	    validNeighbors.push(tempCell);
+	}
     }
-  }
 
-  return validNeighbors;
+    return validNeighbors;
 }
 
 // Returns an array of cells neighboring the selected cell that have no wall in between
 function noWallNeighbors(cell){
-  var validNeighbors = [];
-  var tempCell;
-  var currRow = cell[ROW];
-  var currCol = cell[COL];
+    var validNeighbors = [];
+    var tempCell;
+    var currRow = cell[ROW];
+    var currCol = cell[COL];
 
-  // Check cell on top
-  if (currRow !== 0 && maze[currCol][currRow].walls.indexOf('top') === -1) {
-    tempCell = [currCol, currRow - 1];
-    validNeighbors.push(tempCell);
-  }
+    // Check cell on top
+    if (currRow !== 0 && maze[currCol][currRow].walls.indexOf('top') === -1) {
+	tempCell = [currCol, currRow - 1];
+	validNeighbors.push(tempCell);
+    }
 
-  // Check cell below
-  if (currRow !== visited[currCol].length - 1 && maze[currCol][currRow].walls.indexOf('bot') === -1) {
-    tempCell = [currCol, currRow + 1];
-    validNeighbors.push(tempCell);
-  }
+    // Check cell below
+    if (currRow !== visited[currCol].length - 1 && maze[currCol][currRow].walls.indexOf('bot') === -1) {
+	tempCell = [currCol, currRow + 1];
+	validNeighbors.push(tempCell);
+    }
 
-  // Check cell to left
-  if (currCol !== 0 && maze[currCol][currRow].walls.indexOf('left') === -1) {
-    tempCell = [currCol - 1, currRow];
-    validNeighbors.push(tempCell);
-  }
+    // Check cell to left
+    if (currCol !== 0 && maze[currCol][currRow].walls.indexOf('left') === -1) {
+	tempCell = [currCol - 1, currRow];
+	validNeighbors.push(tempCell);
+    }
 
-  // Check cell to right
-  if (currCol !== visited.length - 1 && maze[currCol][currRow].walls.indexOf('right') === -1) {
-    tempCell = [currCol + 1, currRow];
-    validNeighbors.push(tempCell);
-  }
+    // Check cell to right
+    if (currCol !== visited.length - 1 && maze[currCol][currRow].walls.indexOf('right') === -1) {
+	tempCell = [currCol + 1, currRow];
+	validNeighbors.push(tempCell);
+    }
 
-  return validNeighbors;
+    return validNeighbors;
 }
 
 /* Returns an array of cells that will spawn puzzles when avatar steps on it
@@ -656,74 +658,108 @@ function noWallNeighbors(cell){
    i.e. after passing a cell that has noWallNeighbors length of 3
 */
 function getPuzzleLocations(numPuzzles = 3) {
-  puzzleCells = [];
-  var zoneLength = solvePath.length / (numPuzzles + 1);
-  var puzzlesAdded = 0;
-  for (var i = 0; i < solvePath.length && puzzlesAdded < numPuzzles; i++) {
-    if (i === parseInt(zoneLength * (puzzlesAdded + 1))) {
-      puzzleCells.push(solvePath[i]);
-      puzzlesAdded++;
+    puzzleCells = [];
+    var zoneLength = solvePath.length / (numPuzzles + 1);
+    var puzzlesAdded = 0;
+    for (var i = 0; i < solvePath.length && puzzlesAdded < numPuzzles; i++) {
+	if (i === parseInt(zoneLength * (puzzlesAdded + 1))) {
+	    puzzleCells.push(solvePath[i]);
+	    puzzlesAdded++;
+	}
     }
-  }
-  // console.log(puzzleCells);
-  makePuzzles();
+    // console.log(puzzleCells);
+    makePuzzles();
 }
 
 function displayPuzzleLocations() {
-  for (var i = 0; i < puzzleCells.length; i++) {
-    ctx.fillStyle = 'rgba(20, 20, 255, 0.8)';
-    ctx.fillRect(puzzleCells[i][COL] * cellWidth + widthOffset, puzzleCells[i][ROW] * cellHeight + heightOffset, cellWidth, cellHeight);
-  }
+    for (var i = 0; i < puzzleCells.length; i++) {
+	ctx.fillStyle = 'rgba(20, 20, 255, 0.8)';
+	ctx.fillRect(puzzleCells[i][COL] * cellWidth + widthOffset, puzzleCells[i][ROW] * cellHeight + heightOffset, cellWidth, cellHeight);
+    }
 }
 
 // Returns index of puzzle cell that the avatar is currently on
 function checkOnPuzzle() {
-  for (var i = 0; i < puzzleCells.length; i++) {
-    var cell = checkInCell(puzzleCells[i]);
-    if (cell !== undefined) {
-      console.log(cell);
-      return i;
+    for (var i = 0; i < puzzleCells.length; i++) {
+	var cell = checkInCell(puzzleCells[i]);
+	if (cell !== undefined) {
+	    console.log(cell);
+	    return i;
+	}
     }
-  }
 
-  return -1;
+    return -1;
 }
 
 // Returns true if avatar is on the endCell
 function checkEnd() {
-  if (checkInCell(endCell)){
-    var modal = document.getElementById('endModal');
-    var modalBtn = document.getElementById('endModalBtn');
-    if (modal.getAttribute("solved") === "false") {
-      openModal(modal, modalBtn);
+    if (checkInCell(endCell)){
+	var modal = document.getElementById('endModal');
+	var modalBtn = document.getElementById('endModalBtn');
+	if (modal.getAttribute("solved") === "false") {
+	    openModal(modal, modalBtn);
+	}
     }
-  }
 }
 
 function checkInCell(cell) {
-  var leftBound = cell[COL] * cellWidth + widthOffset;
-  var rightBound = (cell[COL] + 1) * cellWidth + widthOffset;
-  var topBound = cell[ROW] * cellHeight + heightOffset;
-  var botBound = (cell[ROW] + 1) * cellHeight + heightOffset;
-  // console.log(cell);
-  // console.log([leftBound, rightBound, topBound, botBound]);
-  var middle = [avatarX + avatarWidth / 2, avatarY + avatarHeight / 2];
-  // console.log(middle);
-  if (middle[COL] > leftBound && middle[COL] < rightBound && middle[ROW] > topBound && middle[ROW] < botBound) {
-    // console.log(true);
-    return cell;
-  }
-  return;
+    var leftBound = cell[COL] * cellWidth + widthOffset;
+    var rightBound = (cell[COL] + 1) * cellWidth + widthOffset;
+    var topBound = cell[ROW] * cellHeight + heightOffset;
+    var botBound = (cell[ROW] + 1) * cellHeight + heightOffset;
+    // console.log(cell);
+    // console.log([leftBound, rightBound, topBound, botBound]);
+    var middle = [avatarX + avatarWidth / 2, avatarY + avatarHeight / 2];
+    // console.log(middle);
+    if (middle[COL] > leftBound && middle[COL] < rightBound && middle[ROW] > topBound && middle[ROW] < botBound) {
+	// console.log(true);
+	return cell;
+    }
+    return;
 }
 
 // creates modals for the puzzles
 function makePuzzles() {
-  var body = document.getElementsByTagName('BODY')[0];
-  for (var i = 0; i < puzzleCells.length; i++) {
+    var body = document.getElementsByTagName('BODY')[0];
+    for (var i = 0; i < puzzleCells.length; i++) {
+	var modal = document.createElement('DIV');
+	modal.classList.add('modal');
+	modal.style.display = 'none';
+	modal.id = 'puzzle' + i;
+	modal.setAttribute('solved', false);
+	var modalContent = document.createElement('DIV');
+	modalContent.classList.add('modal-content');
+	var modalHeader = document.createElement('DIV');
+	modalHeader.classList.add('modal-header');
+	var modalButton = document.createElement('SPAN');
+	modalButton.classList.add('closeBtn');
+	modalButton.innerHTML = '&times;';
+	modalButton.id = 'puzzleBtn' + i;
+	// modalButton.addEventListener('click', openModal);
+	// modalButton.addEventListener('click', closeModal);
+	modalHeader.appendChild(modalButton);
+	var modalBody = document.createElement('DIV');
+	modalBody.classList.add('modal-body');
+	modalBody.textContent = "Puzzle " + i;
+	var puzzleCanvas = document.createElement('CANVAS');
+	puzzleCanvas.id = 'puzzleCanvas' + i;
+	// puzzleCanvas.style.resize = 'both';
+	modalBody.appendChild(puzzleCanvas);
+	var modalFooter = document.createElement('DIV');
+	modalFooter.classList.add('modal-footer');
+	modalContent.appendChild(modalHeader);
+	modalContent.appendChild(modalBody);
+	modalContent.appendChild(modalFooter);
+	modal.appendChild(modalContent);
+	body.appendChild(modal);
+    }
+}
+
+function makeEndModal() {
+    var body = document.getElementsByTagName('BODY')[0];
     var modal = document.createElement('DIV');
     modal.classList.add('modal');
-    modal.style.display = 'none';
-    modal.id = 'puzzle' + i;
+    modal.id = 'endModal';
     modal.setAttribute('solved', false);
     var modalContent = document.createElement('DIV');
     modalContent.classList.add('modal-content');
@@ -732,17 +768,11 @@ function makePuzzles() {
     var modalButton = document.createElement('SPAN');
     modalButton.classList.add('closeBtn');
     modalButton.innerHTML = '&times;';
-    modalButton.id = 'puzzleBtn' + i;
-    // modalButton.addEventListener('click', openModal);
-    // modalButton.addEventListener('click', closeModal);
+    modalButton.id = 'endModalBtn';
     modalHeader.appendChild(modalButton);
     var modalBody = document.createElement('DIV');
     modalBody.classList.add('modal-body');
-    modalBody.textContent = "Puzzle " + i;
-    var puzzleCanvas = document.createElement('CANVAS');
-    puzzleCanvas.id = 'puzzleCanvas' + i;
-    // puzzleCanvas.style.resize = 'both';
-    modalBody.appendChild(puzzleCanvas);
+    modalBody.textContent = 'Great job! You solved the maze!';
     var modalFooter = document.createElement('DIV');
     modalFooter.classList.add('modal-footer');
     modalContent.appendChild(modalHeader);
@@ -750,34 +780,6 @@ function makePuzzles() {
     modalContent.appendChild(modalFooter);
     modal.appendChild(modalContent);
     body.appendChild(modal);
-  }
-}
-
-function makeEndModal() {
-  var body = document.getElementsByTagName('BODY')[0];
-  var modal = document.createElement('DIV');
-  modal.classList.add('modal');
-  modal.id = 'endModal';
-  modal.setAttribute('solved', false);
-  var modalContent = document.createElement('DIV');
-  modalContent.classList.add('modal-content');
-  var modalHeader = document.createElement('DIV');
-  modalHeader.classList.add('modal-header');
-  var modalButton = document.createElement('SPAN');
-  modalButton.classList.add('closeBtn');
-  modalButton.innerHTML = '&times;';
-  modalButton.id = 'endModalBtn';
-  modalHeader.appendChild(modalButton);
-  var modalBody = document.createElement('DIV');
-  modalBody.classList.add('modal-body');
-  modalBody.textContent = 'Great job! You solved the maze!';
-  var modalFooter = document.createElement('DIV');
-  modalFooter.classList.add('modal-footer');
-  modalContent.appendChild(modalHeader);
-  modalContent.appendChild(modalBody);
-  modalContent.appendChild(modalFooter);
-  modal.appendChild(modalContent);
-  body.appendChild(modal);
 }
 
 function removeElementsByClass(className) {
@@ -789,39 +791,39 @@ function removeElementsByClass(className) {
 
 //function to open modalBtn
 function openModal(modal, button) {
-  modal.style.display = 'block';
-  modal.style.width = window.innerWidth +'px';
-  modal.style.height = window.innerHeight +'px';
-  button.addEventListener('click', closeModal);
-  // button.style.display = 'block';
-  currModal = modal;
-  inModal = true;
-  velX = 0;
-  velY = 0;
+    modal.style.display = 'block';
+    modal.style.width = window.innerWidth +'px';
+    modal.style.height = window.innerHeight +'px';
+    button.addEventListener('click', closeModal);
+    // button.style.display = 'block';
+    currModal = modal;
+    inModal = true;
+    velX = 0;
+    velY = 0;
 }
 
 function closeModal() {
-  currModal.style.display = 'none';
-  currModal.setAttribute("solved", true);
-  inModal = false;
+    currModal.style.display = 'none';
+    currModal.setAttribute("solved", true);
+    inModal = false;
 }
 
 
 function displayPuzzleModal(index) {
-  if (index > -1) {
-    var modalId = 'puzzle' + index;
-    var buttonId = 'puzzleBtn' + index;
-    var canvasId = 'puzzleCanvas' + index;
-    var modal = document.getElementById(modalId);
-    var button = document.getElementById(buttonId);
-    var canvas = document.getElementById(canvasId);
-    console.log(modal.getAttribute("solved"));
-    if (modal.getAttribute("solved") === "false") {
-      openModal(modal, button);
-      // canvas.style.height = window.innerWidth + 'px';
-      // canvas.style.height = window.innerHeight + 'px';
+    if (index > -1) {
+	var modalId = 'puzzle' + index;
+	var buttonId = 'puzzleBtn' + index;
+	var canvasId = 'puzzleCanvas' + index;
+	var modal = document.getElementById(modalId);
+	var button = document.getElementById(buttonId);
+	var canvas = document.getElementById(canvasId);
+	console.log(modal.getAttribute("solved"));
+	if (modal.getAttribute("solved") === "false") {
+	    openModal(modal, button);
+	    // canvas.style.height = window.innerWidth + 'px';
+	    // canvas.style.height = window.innerHeight + 'px';
+	}
     }
-  }
 }
 
 init();
@@ -1661,31 +1663,31 @@ function selectAcc(ac) {
 	acc.setAttribute("src", "images/accessories/a6.png");
 	break;
 
-    
+	
     }
 
 }
 
 function start() {
     /*
-    ctx2.clearRect(avatarX, avatarY, avatarWidth, avatarHeight);
-    var imageObj1 = new Image();
-    var imageObj2 = new Image();
-    var imageObj3 = new Image();
-    imageObj1.src = "images/hair/h12ginger.png";
-    imageObj1.onload = function() {
-	ctx2.drawImage(imageObj1, 0, 0, 100, 90);
-	imageObj2.src = "images/eyes/e2.png";
-	imageObj2.onload = function() {
-	    ctx2.drawImage(imageObj2, 0, 0, 100, 90);
-	}
-	imageObj3.src = "images/pants/p3.png";
-	imageObj3.onload = function() {
-	    ctx.drawImage(imageObj3, 0, 0, 100, 90);
-	    var img = canvas2.toDataURL("image/png");
-	    document.write('<img src="' + img + '" style="image-rendering:auto; image-rendering:crisp-edges; image-rendering:pixelated;" />');
-	}
-    };*/
+      ctx2.clearRect(avatarX, avatarY, avatarWidth, avatarHeight);
+      var imageObj1 = new Image();
+      var imageObj2 = new Image();
+      var imageObj3 = new Image();
+      imageObj1.src = "images/hair/h12ginger.png";
+      imageObj1.onload = function() {
+      ctx2.drawImage(imageObj1, 0, 0, 100, 90);
+      imageObj2.src = "images/eyes/e2.png";
+      imageObj2.onload = function() {
+      ctx2.drawImage(imageObj2, 0, 0, 100, 90);
+      }
+      imageObj3.src = "images/pants/p3.png";
+      imageObj3.onload = function() {
+      ctx.drawImage(imageObj3, 0, 0, 100, 90);
+      var img = canvas2.toDataURL("image/png");
+      document.write('<img src="' + img + '" style="image-rendering:auto; image-rendering:crisp-edges; image-rendering:pixelated;" />');
+      }
+      };*/
     character_select.style = "none";
 }
 
