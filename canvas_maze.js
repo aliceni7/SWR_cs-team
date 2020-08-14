@@ -423,38 +423,38 @@ var maxSpeed = 4;
 
 // Returns the [COL, ROW] of where avatar is located
 function getAvatarPosition() {
-    var c = Math.floor((avatarX - widthOffset) / cellWidth);
-    var r = Math.floor((avatarY - heightOffset) / cellHeight);
-    console.log([avatarX, avatarY]);
-    console.log([c, r]);
-    return [c, r];
+  var c = Math.floor((avatarX - widthOffset) / cellWidth);
+  var r = Math.floor((avatarY - heightOffset) / cellHeight);
+  console.log([avatarX, avatarY]);
+  console.log([c, r]);
+  return [c, r];
 }
 
 function avatarPosition(a, b) {
-    avatarX = a;
-    avatarY = b;
+  avatarX = a;
+  avatarY = b;
 }
 
 function gameLoop() {
-    if (!inModal){
-	whatKey();
-    }
-    canvas2.width = window.innerWidth;
-    canvas2.height = window.innerHeight;
+  if (!inModal){
+  	whatKey();
+  }
+  canvas2.width = window.innerWidth;
+  canvas2.height = window.innerHeight;
 
-    avatarX += velX;
-    Math.round(avatarX);
-    avatarY += velY;
-    Math.round(avatarY);
+  avatarX += velX;
+  Math.round(avatarX);
+  avatarY += velY;
+  Math.round(avatarY);
 
-    //console.log(Math.round(avatarX), avatarY);
-    if (velX || velY){
-	displayPuzzleModal(checkOnPuzzle());
-	checkEnd();
-    }
+  //console.log(Math.round(avatarX), avatarY);
+  if (velX || velY){
+  	displayPuzzleModal(checkOnPuzzle());
+  	checkEnd();
+  }
 
-    ctx2.fillRect(avatarX, avatarY, avatarHeight, avatarHeight);
-    requestAnimationFrame(gameLoop);
+  ctx2.fillRect(avatarX, avatarY, avatarWidth, avatarHeight);
+  requestAnimationFrame(gameLoop);
 }
 
 function arraysEqual(a, b) {
@@ -503,11 +503,11 @@ function whatKey() {
 	//velX = 4;  right key
 	const rightSide = [];
 	for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
-	    rightSide.push(canvas.getContext('2d').getImageData(avatarX + avatarHeight, avatarY + i, 1, 1).data);
+	    rightSide.push(canvas.getContext('2d').getImageData(avatarX + avatarWidth, avatarY + i, 1, 1).data);
 	}
 
 	// console.log(rightSide);
-	if (avatarX > canvas.width - avatarHeight || checkEquality(rightSide)) {
+	if (avatarX > canvas.width - avatarWidth || checkEquality(rightSide)) {
 	    velX = 0;
 	    velY = 0;
 	} else if (velX < maxSpeed) {
@@ -518,7 +518,7 @@ function whatKey() {
     if (keys[40]) {
 	//velY = 4;  down key
 	const bottomSide = [];
-	for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
+	for (i = wallThickness; i < avatarWidth - wallThickness; i++) {
 	    bottomSide.push(canvas.getContext('2d').getImageData(avatarX + i, avatarY + avatarHeight, 1, 1).data);
 	}
 
@@ -533,7 +533,7 @@ function whatKey() {
     if (keys[38]) {
 	//velY = 4;  up key
 	const topSide = [];
-	for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
+	for (i = wallThickness; i < avatarWidth - wallThickness; i++) {
 	    topSide.push(canvas.getContext('2d').getImageData(avatarX + i, avatarY, 1, 1).data);
 	}
 
@@ -843,11 +843,11 @@ function select(color) {
     body = document.getElementById("skin-a");
     function switchSkin(c) {
 	switch(c){
-	    
+
 	case "#ffe0b4":
 	    body.setAttribute("src", "images/body/b1.png");
 	    break;
-	    
+
 	case "#f8d998":
 	    body.setAttribute("src", "images/body/b2.png");
 	    break;
@@ -868,10 +868,10 @@ function select(color) {
 	    body.setAttribute("src", "images/body/b6.png");
 	    break;
 
-	    
+
 	}
     }
-    
+
     if (isFirst) {
 	skin_tone = document.getElementById(color);
 	skin_tone.style.border = "1px solid  #f94e30 ";
@@ -882,7 +882,7 @@ function select(color) {
 	skin_tone = document.getElementById(color);
 	skin_tone.style.border = "1px solid  #f94e30 ";
 	switchSkin(color);
-	
+
     }
     //avatar.style.background = color;
     //character_select.style.display = "none";
@@ -958,7 +958,7 @@ function selectHair(image) {
 	hair.setAttribute("src", "images/hair/h1black.png");
 	hair_s.setAttribute("src", "images/hair/h1 color map.png");
 	break;
-	
+
     case "images/hair/h2black.png":
 	hair.setAttribute("src", "images/hair/h2black.png");
 	hair_s.setAttribute("src", "images/hair/h2 color map.png");
@@ -968,7 +968,7 @@ function selectHair(image) {
 	hair.setAttribute("src", "images/hair/h3black.png");
 	hair_s.setAttribute("src", "images/hair/h3 color map.png");
 	break;
-	
+
     case "images/hair/h4black.png":
 	hair.setAttribute("src", "images/hair/h4black.png");
 	hair_s.setAttribute("src", "images/hair/h4 color map.png");
@@ -983,7 +983,7 @@ function selectHair(image) {
 	hair.setAttribute("src", "images/hair/h6black.png");
 	hair_s.setAttribute("src", "images/hair/h6 color map.png");
 	break;
-	
+
     case "images/hair/h7black.png":
 	hair.setAttribute("src", "images/hair/h7black.png");
 	hair_s.setAttribute("src", "images/hair/h7 color map.png");
@@ -993,7 +993,7 @@ function selectHair(image) {
 	hair.setAttribute("src", "images/hair/h8black.png");
 	hair_s.setAttribute("src", "images/hair/h8 color map.png");
 	break;
-	
+
     case "images/hair/h9black.png":
 	hair.setAttribute("src", "images/hair/h9black.png");
 	hair_s.setAttribute("src", "images/hair/h9 color map.png");
@@ -1008,7 +1008,7 @@ function selectHair(image) {
 	hair.setAttribute("src", "images/hair/h11black.png");
 	hair_s.setAttribute("src", "images/hair/h11 color map.png");
 	break;
-	
+
     case "images/hair/h12black.png":
 	hair.setAttribute("src", "images/hair/h12black.png");
 	hair_s.setAttribute("src", "images/hair/h12 color map.png");
@@ -1018,7 +1018,7 @@ function selectHair(image) {
 	hair.setAttribute("src", "images/hair/h13black.png");
 	hair_s.setAttribute("src", "images/hair/h13 color map.png");
 	break;
-	
+
     case "images/hair/h14black.png":
 	hair.setAttribute("src", "images/hair/h14black.png");
 	hair_s.setAttribute("src", "images/blank.png");
@@ -1039,21 +1039,21 @@ function selectHair(image) {
 	hair_s.setAttribute("src", "images/hair/h17 color map.png");
 	break;
 
-    case "images/hair/h1blond.png": 
+    case "images/hair/h1blond.png":
 	hair.setAttribute("src", "images/hair/h1blond.png");
 	hair_s.setAttribute("src", "images/hair/h1 color map.png");
 	break;
-	
+
     case "images/hair/h2blond.png":
 	hair.setAttribute("src", "images/hair/h2blond.png");
 	hair_s.setAttribute("src", "images/hair/h2 color map.png");
 	break;
 
-    case "images/hair/h3blond.png": 
+    case "images/hair/h3blond.png":
 	hair.setAttribute("src", "images/hair/h3blond.png");
 	hair_s.setAttribute("src", "images/hair/h3 color map.png");
 	break;
-	
+
     case "images/hair/h4blond.png":
 	hair.setAttribute("src", "images/hair/h4blond.png");
 	hair_s.setAttribute("src", "images/hair/h4 color map.png");
@@ -1124,21 +1124,21 @@ function selectHair(image) {
 	hair_s.setAttribute("src", "images/hair/h17 color map.png");
 	break;
 
-    case "images/hair/h1brown.png": 
+    case "images/hair/h1brown.png":
 	hair.setAttribute("src", "images/hair/h1brown.png");
 	hair_s.setAttribute("src", "images/hair/h1 color map.png");
 	break;
-	
+
     case "images/hair/h2brown.png":
 	hair.setAttribute("src", "images/hair/h2brown.png");
 	hair_s.setAttribute("src", "images/hair/h2 color map.png");
 	break;
 
-    case "images/hair/h3brown.png": 
+    case "images/hair/h3brown.png":
 	hair.setAttribute("src", "images/hair/h3brown.png");
 	hair_s.setAttribute("src", "images/hair/h3 color map.png");
 	break;
-	
+
     case "images/hair/h4brown.png":
 	hair.setAttribute("src", "images/hair/h4brown.png");
 	hair_s.setAttribute("src", "images/hair/h4 color map.png");
@@ -1149,21 +1149,21 @@ function selectHair(image) {
 	hair_s.setAttribute("src", "images/hair/h5 color map.png");
 	break;
 
-    case "images/hair/h6brown.png": 
+    case "images/hair/h6brown.png":
 	hair.setAttribute("src", "images/hair/h6brown.png");
 	hair_s.setAttribute("src", "images/hair/h6 color map.png");
 	break;
-	
+
     case "images/hair/h7brown.png":
 	hair.setAttribute("src", "images/hair/h7brown.png");
 	hair_s.setAttribute("src", "images/hair/h7 color map.png");
 	break;
 
-    case "images/hair/h8brown.png": 
+    case "images/hair/h8brown.png":
 	hair.setAttribute("src", "images/hair/h8brown.png");
 	hair_s.setAttribute("src", "images/hair/h8 color map.png");
 	break;
-	
+
     case "images/hair/h9brown.png":
 	hair.setAttribute("src", "images/hair/h9brown.png");
 	hair_s.setAttribute("src", "images/hair/h9 color map.png");
@@ -1174,21 +1174,21 @@ function selectHair(image) {
 	hair_s.setAttribute("src", "images/hair/h10 color map.png");
 	break;
 
-    case "images/hair/h11brown.png": 
+    case "images/hair/h11brown.png":
 	hair.setAttribute("src", "images/hair/h11brown.png");
 	hair_s.setAttribute("src", "images/hair/h11 color map.png");
 	break;
-	
+
     case "images/hair/h12brown.png":
 	hair.setAttribute("src", "images/hair/h12brown.png");
 	hair_s.setAttribute("src", "images/hair/h12 color map.png");
 	break;
 
-    case "images/hair/h13brown.png": 
+    case "images/hair/h13brown.png":
 	hair.setAttribute("src", "images/hair/h13brown.png");
 	hair_s.setAttribute("src", "images/hair/h13 color map.png");
 	break;
-	
+
     case "images/hair/h14brown.png":
 	hair.setAttribute("src", "images/hair/h14brown.png");
 	hair_s.setAttribute("src", "images/blank.png");
@@ -1313,7 +1313,7 @@ function selectHair(image) {
 	hair.setAttribute("src", "images/hair/h18.png");
 	hair_s.setAttribute("src", "images/blank.png");
 	break;
-	
+
     }
 }
 
@@ -1411,13 +1411,13 @@ function switchShirt(s){
 function selectClothes(clothes) {
     pants = document.getElementById("pants-a");
     shirt = document.getElementById("shirt-a");
-    
+
     switch(clothes){
-	
+
     case "images/shirt/s1.png":
 	shirt.setAttribute("src", "images/shirt/s1.png");
 	break;
-	
+
     case "images/shirt/s2.png":
 	shirt.setAttribute("src", "images/shirt/s2.png");
 	break;
@@ -1425,7 +1425,7 @@ function selectClothes(clothes) {
     case "images/shirt/s3.png":
 	shirt.setAttribute("src", "images/shirt/s3.png");
 	break;
-	
+
     case "images/shirt/s4.png":
 	shirt.setAttribute("src", "images/shirt/s4.png");
 	break;
@@ -1433,7 +1433,7 @@ function selectClothes(clothes) {
     case "images/shirt/s5.png":
 	shirt.setAttribute("src", "images/shirt/s5.png");
 	break;
-	
+
     case "images/shirt/s6.png":
 	shirt.setAttribute("src", "images/shirt/s6.png");
 	break;
@@ -1441,7 +1441,7 @@ function selectClothes(clothes) {
     case "images/shirt/s7.png":
 	shirt.setAttribute("src", "images/shirt/s7.png");
 	break;
-	
+
     case "images/shirt/s8.png":
 	shirt.setAttribute("src", "images/shirt/s8.png");
 	break;
@@ -1449,7 +1449,7 @@ function selectClothes(clothes) {
     case "images/shirt/s9.png":
 	shirt.setAttribute("src", "images/shirt/s9.png");
 	break;
-	
+
     case "images/shirt/s10.png":
 	shirt.setAttribute("src", "images/shirt/s10.png");
 	break;
@@ -1457,7 +1457,7 @@ function selectClothes(clothes) {
     case "images/shirt/s11.png":
 	shirt.setAttribute("src", "images/shirt/s11.png");
 	break;
-	
+
     case "images/shirt/s12.png":
 	shirt.setAttribute("src", "images/shirt/s12.png");
 	break;
@@ -1465,7 +1465,7 @@ function selectClothes(clothes) {
     case "images/shirt/s13.png":
 	shirt.setAttribute("src", "images/shirt/s13.png");
 	break;
-	
+
     case "images/shirt/s14.png":
 	shirt.setAttribute("src", "images/shirt/s14.png");
 	break;
@@ -1473,7 +1473,7 @@ function selectClothes(clothes) {
     case "images/shirt/s15.png":
 	shirt.setAttribute("src", "images/shirt/s15.png");
 	break;
-	
+
     case "images/shirt/s16.png":
 	shirt.setAttribute("src", "images/shirt/s16.png");
 	break;
@@ -1481,12 +1481,12 @@ function selectClothes(clothes) {
     case "images/shirt/s17.png":
 	shirt.setAttribute("src", "images/shirt/s17.png");
 	break;
-	
+
     case "images/shirt/s18.png":
 	shirt.setAttribute("src", "images/shirt/s18.png");
 	break;
 
-	
+
 
     case "images/pants/p1.png":
 	pants.setAttribute("src", "images/pants/p1.png");
@@ -1503,7 +1503,7 @@ function selectClothes(clothes) {
     case "images/pants/p4.png":
 	pants.setAttribute("src", "images/pants/p4.png");
 	break;
-	
+
     }
 
 }
@@ -1663,7 +1663,7 @@ function selectAcc(ac) {
 	acc.setAttribute("src", "images/accessories/a6.png");
 	break;
 
-	
+
     }
 
 }
@@ -1690,4 +1690,3 @@ function start() {
       };*/
     character_select.style = "none";
 }
-
