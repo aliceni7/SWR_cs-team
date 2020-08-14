@@ -24,6 +24,7 @@ var widthOffset = cellWidth / 2;
 var heightOffset = cellHeight / 2;
 var wallThickness = 8;
 var borderThickness = 10;
+var currModal;
 
 /* Window Resizing */
 window.addEventListener('resize', resizeMaze);
@@ -59,6 +60,7 @@ var form = document.querySelector('form');
 form.onsubmit = function () {
   mazeRows = parseInt(form.maze_rows.value);
   mazeCols = parseInt(form.maze_cols.value);
+  removeElementsByClass('modal');
   generateMaze(mazeRows, mazeCols);
   resizeMaze();
 
@@ -704,13 +706,14 @@ function makePuzzles() {
     var modalButton = document.createElement('SPAN');
     modalButton.classList.add('closeBtn');
     modalButton.innerHTML = '&times;';
-    modalButton.addEventListener('click', openModal);
-    modalButton.addEventListener('click', closeModal);
+    modalButton.id = 'puzzleBtn' + i;
+    // modalButton.addEventListener('click', openModal);
+    // modalButton.addEventListener('click', closeModal);
     modalHeader.appendChild(modalButton);
     var modalBody = document.createElement('DIV');
     modalBody.classList.add('modal-body');
     var puzzleCanvas = document.createElement('CANVAS');
-    puzzleCanvas.id = 'puzzle_canvas' + i;
+    puzzleCanvas.id = 'puzzleCanvas' + i;
     // puzzleCanvas.style.resize = 'both';
     modalBody.appendChild(puzzleCanvas);
     var modalFooter = document.createElement('DIV');
@@ -723,22 +726,39 @@ function makePuzzles() {
   }
 }
 
-//function to open modalBtn
-function openModal(modal){
-  modal.style.display = 'block';
+function removeElementsByClass(className) {
+    var elements = document.getElementsByClassName(className);
+    while(elements.length > 0){
+        elements[0].parentNode.removeChild(elements[0]);
+    }
 }
 
-function closeModal(modal){
-  modal.style.display = 'none';
+//function to open modalBtn
+function openModal(modal, button, canvas) {
+  modal.style.display = 'block';
+  modal.style.width = window.innerWidth +'px';
+  modal.style.height = window.innerHeight +'px';
+  button.addEventListener('click', closeModal);
+  // button.style.display = 'block';
+  // canvas.style.height = window.innerWidth + 'px';
+  // canvas.style.height = window.innerHeight + 'px';
+  currModal = modal;
+}
+
+function closeModal() {
+  currModal.style.display = 'none';
 }
 
 
 function displayPuzzleModal(index) {
   if (index > -1) {
-    var puzzleId = 'puzzle' + index;
-    console.log(puzzleId);
-    var modal = document.getElementById(puzzleId);
-    // openModal(modal);
+    var modalId = 'puzzle' + index;
+    var buttonId = 'puzzleBtn' + index;
+    var canvasId = 'puzzleCanvas' + index;
+    var modal = document.getElementById(modalId);
+    var button = document.getElementById(buttonId);
+    var canvas = document.getElementById(canvasId);
+    openModal(modal, button, canvas);
   }
 }
 
