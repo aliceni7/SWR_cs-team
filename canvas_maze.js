@@ -699,6 +699,7 @@ function makePuzzles() {
     modal.classList.add('modal');
     modal.style.display = 'none';
     modal.id = 'puzzle' + i;
+    modal.setAttribute('solved', false);
     var modalContent = document.createElement('DIV');
     modalContent.classList.add('modal-content');
     var modalHeader = document.createElement('DIV');
@@ -747,6 +748,7 @@ function openModal(modal, button, canvas) {
 
 function closeModal() {
   currModal.style.display = 'none';
+  currModal.setAttribute("solved", true);
 }
 
 
@@ -758,7 +760,10 @@ function displayPuzzleModal(index) {
     var modal = document.getElementById(modalId);
     var button = document.getElementById(buttonId);
     var canvas = document.getElementById(canvasId);
-    openModal(modal, button, canvas);
+    console.log(modal.getAttribute("solved"));
+    if (modal.getAttribute("solved") === "false") {
+      openModal(modal, button, canvas);
+    }
   }
 }
 
