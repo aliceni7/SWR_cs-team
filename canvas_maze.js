@@ -39,16 +39,17 @@ function getCursorPosition(canvas, event) {
 }
 
 function resizeMaze() {
+  var oldWidth = canvas.width;
+  var oldHeight = canvas.height;
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   cellWidth = canvas.width / (mazeCols + 1);
   cellHeight = canvas.height / (mazeRows + 1);
   widthOffset = cellWidth / 2;
   heightOffset = cellHeight / 2;
-
-  //console.log(cellHeight * .8);
   avatarWidth = parseInt(cellWidth * .8);
   avatarHeight = parseInt(cellHeight * .8);
+  avatarPosition(avatarX * canvas.width / oldWidth, avatarY * canvas.height / oldHeight);
   drawMaze();
 }
 
@@ -67,7 +68,7 @@ form.onsubmit = function () {
   resizeMaze();
 
   //positions avatar at the start cell
-  avatarPosition(startCell[COL] * cellWidth + cellWidth / 2, startCell[ROW] * cellHeight + cellHeight / 2 + 2);
+  avatarPosition(startCell[COL] * cellWidth + cellWidth * 0.6, startCell[ROW] * cellHeight + cellHeight * 0.6);
   return false;
 };
 
@@ -81,7 +82,7 @@ function generateMaze(r = defaultRows, c = defaultCols) {
 
   //console.log(maze);
   //positions avatar at the start cell
-  avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50);
+  avatarPosition(startCell[COL] * cellWidth + cellWidth * 0.6, startCell[ROW] * cellHeight + cellHeight * 0.6);
 }
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
@@ -153,21 +154,21 @@ function drawWalls() {
           ctx.lineWidth = borderThickness;
         }
 
-        ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset);
-        ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset);
+        ctx.moveTo(topLeft[0] + widthOffset - ctx.lineWidth / 2, topLeft[1] + heightOffset);
+        ctx.lineTo(topLeft[0] + cellWidth + widthOffset + ctx.lineWidth / 2, topLeft[1] + heightOffset);
         ctx.stroke();
         ctx.beginPath();
         ctx.lineWidth = wallThickness;
       }
 
-      // Draws the right border starting from top right corner
+      // Draws the bottom border
       if (maze[c][r].walls.indexOf('bot') > -1) {
         if (maze[c][r].borders.indexOf('bot') > -1) {
           ctx.lineWidth = borderThickness;
         }
 
-        ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset);
-        ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset);
+        ctx.moveTo(topLeft[0] + widthOffset - ctx.lineWidth / 2, topLeft[1] + cellHeight + heightOffset);
+        ctx.lineTo(topLeft[0] + cellWidth + widthOffset + ctx.lineWidth / 2, topLeft[1] + cellHeight + heightOffset);
         ctx.stroke();
         ctx.beginPath();
         ctx.lineWidth = wallThickness;
@@ -179,8 +180,8 @@ function drawWalls() {
           ctx.lineWidth = borderThickness;
         }
 
-        ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset);
-        ctx.lineTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset);
+        ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset - ctx.lineWidth / 2);
+        ctx.lineTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset + ctx.lineWidth / 2);
         ctx.stroke();
         ctx.beginPath();
         ctx.lineWidth = wallThickness;
@@ -192,8 +193,8 @@ function drawWalls() {
           ctx.lineWidth = borderThickness;
         }
 
-        ctx.moveTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset);
-        ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset);
+        ctx.moveTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset - ctx.lineWidth / 2);
+        ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset + ctx.lineWidth / 2);
         ctx.stroke();
         ctx.beginPath();
         ctx.lineWidth = wallThickness;
@@ -417,6 +418,15 @@ var velX = 0;
 var velY = 0;
 var keys = [];
 var maxSpeed = 4;
+
+// Returns the [COL, ROW] of where avatar is located
+function getAvatarPosition() {
+  var c = Math.floor((avatarX - widthOffset) / cellWidth);
+  var r = Math.floor((avatarY - heightOffset) / cellHeight);
+  console.log([avatarX, avatarY]);
+  console.log([c, r]);
+  return [c, r];
+}
 
 function avatarPosition(a, b) {
   avatarX = a;
