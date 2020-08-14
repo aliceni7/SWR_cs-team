@@ -152,21 +152,21 @@ function drawWalls() {
           ctx.lineWidth = borderThickness;
         }
 
-        ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset);
-        ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset);
+        ctx.moveTo(topLeft[0] + widthOffset - ctx.lineWidth / 2, topLeft[1] + heightOffset);
+        ctx.lineTo(topLeft[0] + cellWidth + widthOffset + ctx.lineWidth / 2, topLeft[1] + heightOffset);
         ctx.stroke();
         ctx.beginPath();
         ctx.lineWidth = wallThickness;
       }
 
-      // Draws the right border starting from top right corner
+      // Draws the bottom border
       if (maze[c][r].walls.indexOf('bot') > -1) {
         if (maze[c][r].borders.indexOf('bot') > -1) {
           ctx.lineWidth = borderThickness;
         }
 
-        ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset);
-        ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset);
+        ctx.moveTo(topLeft[0] + widthOffset - ctx.lineWidth / 2, topLeft[1] + cellHeight + heightOffset);
+        ctx.lineTo(topLeft[0] + cellWidth + widthOffset + ctx.lineWidth / 2, topLeft[1] + cellHeight + heightOffset);
         ctx.stroke();
         ctx.beginPath();
         ctx.lineWidth = wallThickness;
@@ -178,8 +178,8 @@ function drawWalls() {
           ctx.lineWidth = borderThickness;
         }
 
-        ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset);
-        ctx.lineTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset);
+        ctx.moveTo(topLeft[0] + widthOffset, topLeft[1] + heightOffset - ctx.lineWidth / 2);
+        ctx.lineTo(topLeft[0] + widthOffset, topLeft[1] + cellHeight + heightOffset + ctx.lineWidth / 2);
         ctx.stroke();
         ctx.beginPath();
         ctx.lineWidth = wallThickness;
@@ -191,8 +191,8 @@ function drawWalls() {
           ctx.lineWidth = borderThickness;
         }
 
-        ctx.moveTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset);
-        ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset);
+        ctx.moveTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + heightOffset - ctx.lineWidth / 2);
+        ctx.lineTo(topLeft[0] + cellWidth + widthOffset, topLeft[1] + cellHeight + heightOffset + ctx.lineWidth / 2);
         ctx.stroke();
         ctx.beginPath();
         ctx.lineWidth = wallThickness;
