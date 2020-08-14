@@ -432,9 +432,9 @@ function gameLoop() {
 
   //console.log(Math.round(avatarX), avatarY);
   if (velX || velY){
-    checkOnPuzzle();
+    displayPuzzleModal(checkOnPuzzle());
   }
-  
+
   ctx2.fillRect(avatarX, avatarY, avatarWidth, avatarHeight);
   requestAnimationFrame(gameLoop);
 }
@@ -660,16 +660,17 @@ function displayPuzzleLocations() {
   }
 }
 
-// Returns cell if avatar is currently on a block that will spawn a puzzle, undefined if otherwise
+// Returns index of puzzle cell that the avatar is currently on
 function checkOnPuzzle() {
   for (var i = 0; i < puzzleCells.length; i++) {
     var cell = checkInCell(puzzleCells[i]);
-    // console.log(cell);
     if (cell !== undefined) {
-      return cell;
+      console.log(cell);
+      return i;
     }
   }
-  return;
+
+  return -1;
 }
 
 function checkInCell(cell) {
@@ -702,13 +703,15 @@ function makePuzzles() {
     modalHeader.classList.add('modal-header');
     var modalButton = document.createElement('SPAN');
     modalButton.classList.add('closeBtn');
-    modalButton.innerText = '&times;';
+    modalButton.innerHTML = '&times;';
+    modalButton.addEventListener('click', openModal);
+    modalButton.addEventListener('click', closeModal);
     modalHeader.appendChild(modalButton);
     var modalBody = document.createElement('DIV');
     modalBody.classList.add('modal-body');
     var puzzleCanvas = document.createElement('CANVAS');
     puzzleCanvas.id = 'puzzle_canvas' + i;
-    puzzleCanvas.style.resize = 'both';
+    // puzzleCanvas.style.resize = 'both';
     modalBody.appendChild(puzzleCanvas);
     var modalFooter = document.createElement('DIV');
     modalFooter.classList.add('modal-footer');
@@ -717,6 +720,25 @@ function makePuzzles() {
     modalContent.appendChild(modalFooter);
     modal.appendChild(modalContent);
     body.appendChild(modal);
+  }
+}
+
+//function to open modalBtn
+function openModal(modal){
+  modal.style.display = 'block';
+}
+
+function closeModal(modal){
+  modal.style.display = 'none';
+}
+
+
+function displayPuzzleModal(index) {
+  if (index > -1) {
+    var puzzleId = 'puzzle' + index;
+    console.log(puzzleId);
+    var modal = document.getElementById(puzzleId);
+    openModal(modal);
   }
 }
 
