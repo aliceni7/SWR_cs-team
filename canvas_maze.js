@@ -738,7 +738,7 @@ function displayPuzzleModal(index) {
     var puzzleId = 'puzzle' + index;
     console.log(puzzleId);
     var modal = document.getElementById(puzzleId);
-    openModal(modal);
+    // openModal(modal);
   }
 }
 
