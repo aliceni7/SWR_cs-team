@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Jigsaw Puzzle</title>
@@ -17,7 +17,7 @@
         var scrollVector = new Point(0,0);
         var scrollMargin = 32;
 
-        $('#puzzle-image').attr('src', 'jigsawcontent/images/Earth.png');
+        $('#puzzle-image').attr('src', 'jigsawcontent/images/blue.jpg');
 
         var imgWidth = $('.puzzle-image').css('width').replace('px', '');
         var imgHeight = $('.puzzle-image').css('height').replace('px', '');
@@ -25,7 +25,7 @@
         var config = ({
             zoomScaleOnDrag: 1.125,
             imgName: 'puzzle-image',
-            tileWidth: 125,
+            tileWidth: 100,
             // tilesPerRow: 3,
             // tilesPerColumn: 3,
             imgWidth: imgWidth,
@@ -526,7 +526,7 @@
         <img width="50" height="50" src="jigsawcontent/images/zoomOut.png" class="zoomOut"/>
         <img width="50" height="50" src="jigsawcontent/images/help.png" class="help"/>
     </div>
-    <img width="256" height="256" id="puzzle-image" class="puzzle-image" style="display: none;" src="jigsawcontent/images/enviro.jpg" />
+    <img width="256" height="256" id="puzzle-image" class="puzzle-image" style="display: none;" src="jigsawcontent/images/blue.jpg" />
     <img width="128" height="128" id="empty" style="display: none;" src="jigsawcontent/images/empty.png" />
 </body>
 </html>
