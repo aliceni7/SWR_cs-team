@@ -12,6 +12,8 @@ var mazeCols = 10;
 var maze = []; //will be a 2d array of "cells" containing info about walls
 var startCell;
 var endCell;
+var puzzleCells = [];
+var solvePath = [];
 var cellWidth = canvas.width / (mazeCols + 1);
 var cellHeight = canvas.height / (mazeRows + 1);
 var avatarWidth = parseInt(cellWidth * .8);
@@ -30,7 +32,7 @@ function getCursorPosition(canvas, event) {
   const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
-  console.log('x: ' + x + ' y: ' + y);
+  // console.log('x: ' + x + ' y: ' + y);
 }
 
 function resizeMaze() {
@@ -68,8 +70,9 @@ form.onsubmit = function () {
 function generateMaze(r = defaultRows, c = defaultCols) {
   makeBlankMaze(r, c);
   mazeGenBacktracking(r, c);
+  mazeSolver(r, c);
+  getPuzzleLocations();
   drawMaze();
-  console.log(mazeSolver(r, c));
 
   //console.log(maze);
   //positions avatar at the start cell
@@ -119,6 +122,7 @@ function fillWalls(rows = defaultRows, cols = defaultCols) {
 function drawMaze() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   displayStartEnd();
+  displayPuzzleLocations();
   drawWalls();
 }
 
@@ -427,6 +431,9 @@ function gameLoop() {
   Math.round(avatarY);
 
   //console.log(Math.round(avatarX), avatarY);
+  if (velX || velY){
+    displayPuzzleModal(checkOnPuzzle());
+  }
 
   ctx2.fillRect(avatarX, avatarY, avatarWidth, avatarHeight);
   requestAnimationFrame(gameLoop);
@@ -449,9 +456,10 @@ function arraysEqual(a, b) {
   return true;
 }
 
-function checkEquality(pix) {
+function checkEquality(pix, colorArray = [0, 0, 0, 255]) {
   for (j = 0; j < pix.length; j++) {
-    if (arraysEqual(pix[j], [0, 0, 0, 255])) { return true; }
+    if (arraysEqual(pix[j], colorArray)) { return true; }
+    // if (arraysEqual(pix[j], [0, 0, 0, 255])) { return true; }
   }
 
   return false;
@@ -480,7 +488,7 @@ function whatKey() {
       rightSide.push(canvas.getContext('2d').getImageData(avatarX + avatarWidth, avatarY + i, 1, 1).data);
     }
 
-    console.log(rightSide);
+    // console.log(rightSide);
     if (avatarX > canvas.width - avatarWidth || checkEquality(rightSide)) {
       velX = 0;
       velY = 0;
@@ -527,7 +535,8 @@ function mazeSolver(rows = defaultRows, cols = defaultCols) {
   var visited = makeArray(rows, cols, false);
   stack.push(startCell);
   visited[startCell[COL]][startCell[ROW]] = true;
-  return solveHelper(stack, visited, maze);
+  solvePath = solveHelper(stack, visited, maze);
+  console.log(solvePath);
 }
 
 function solveHelper(stack, visited, maze) {
@@ -548,6 +557,8 @@ function solveHelper(stack, visited, maze) {
   }
 }
 
+// Returns an array of cells neighboring the selected cell that have no wall in between
+// and is unvisited
 function noWallUnvisitedNeighbors(cell, visited) {
   var validNeighbors = [];
   var tempCell;
@@ -587,6 +598,148 @@ function noWallUnvisitedNeighbors(cell, visited) {
   }
 
   return validNeighbors;
+}
+
+// Returns an array of cells neighboring the selected cell that have no wall in between
+function noWallNeighbors(cell){
+  var validNeighbors = [];
+  var tempCell;
+  var currRow = cell[ROW];
+  var currCol = cell[COL];
+
+  // Check cell on top
+  if (currRow !== 0 && maze[currCol][currRow].walls.indexOf('top') === -1) {
+    tempCell = [currCol, currRow - 1];
+    validNeighbors.push(tempCell);
+  }
+
+  // Check cell below
+  if (currRow !== visited[currCol].length - 1 && maze[currCol][currRow].walls.indexOf('bot') === -1) {
+    tempCell = [currCol, currRow + 1];
+    validNeighbors.push(tempCell);
+  }
+
+  // Check cell to left
+  if (currCol !== 0 && maze[currCol][currRow].walls.indexOf('left') === -1) {
+    tempCell = [currCol - 1, currRow];
+    validNeighbors.push(tempCell);
+  }
+
+  // Check cell to right
+  if (currCol !== visited.length - 1 && maze[currCol][currRow].walls.indexOf('right') === -1) {
+    tempCell = [currCol + 1, currRow];
+    validNeighbors.push(tempCell);
+  }
+
+  return validNeighbors;
+}
+
+/* Returns an array of cells that will spawn puzzles when avatar steps on it
+   Location of puzzles should be as even as possible
+   Puzzles should help indicate that the player is going in the right direction
+   i.e. after passing a cell that has noWallNeighbors length of 3
+*/
+function getPuzzleLocations(numPuzzles = 3) {
+  puzzleCells = [];
+  var zoneLength = solvePath.length / (numPuzzles + 1);
+  var puzzlesAdded = 0;
+  for (var i = 0; i < solvePath.length && puzzlesAdded < numPuzzles; i++) {
+    if (i === parseInt(zoneLength * (puzzlesAdded + 1))) {
+      puzzleCells.push(solvePath[i]);
+      puzzlesAdded++;
+    }
+  }
+  // console.log(puzzleCells);
+  makePuzzles();
+}
+
+function displayPuzzleLocations() {
+  for (var i = 0; i < puzzleCells.length; i++) {
+    ctx.fillStyle = 'rgba(20, 20, 255, 0.8)';
+    ctx.fillRect(puzzleCells[i][COL] * cellWidth + widthOffset, puzzleCells[i][ROW] * cellHeight + heightOffset, cellWidth, cellHeight);
+  }
+}
+
+// Returns index of puzzle cell that the avatar is currently on
+function checkOnPuzzle() {
+  for (var i = 0; i < puzzleCells.length; i++) {
+    var cell = checkInCell(puzzleCells[i]);
+    if (cell !== undefined) {
+      console.log(cell);
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+function checkInCell(cell) {
+  var leftBound = cell[COL] * cellWidth + widthOffset;
+  var rightBound = (cell[COL] + 1) * cellWidth + widthOffset;
+  var topBound = cell[ROW] * cellHeight + heightOffset;
+  var botBound = (cell[ROW] + 1) * cellHeight + heightOffset;
+  // console.log(cell);
+  // console.log([leftBound, rightBound, topBound, botBound]);
+  var middle = [avatarX + avatarWidth / 2, avatarY + avatarHeight / 2];
+  // console.log(middle);
+  if (middle[COL] > leftBound && middle[COL] < rightBound && middle[ROW] > topBound && middle[ROW] < botBound) {
+    // console.log(true);
+    return cell;
+  }
+  return;
+}
+
+// creates modals for the puzzles
+function makePuzzles() {
+  var body = document.getElementsByTagName('BODY')[0];
+  for (var i = 0; i < puzzleCells.length; i++) {
+    var modal = document.createElement('DIV');
+    modal.classList.add('modal');
+    modal.style.display = 'none';
+    modal.id = 'puzzle' + i;
+    var modalContent = document.createElement('DIV');
+    modalContent.classList.add('modal-content');
+    var modalHeader = document.createElement('DIV');
+    modalHeader.classList.add('modal-header');
+    var modalButton = document.createElement('SPAN');
+    modalButton.classList.add('closeBtn');
+    modalButton.innerHTML = '&times;';
+    modalButton.addEventListener('click', openModal);
+    modalButton.addEventListener('click', closeModal);
+    modalHeader.appendChild(modalButton);
+    var modalBody = document.createElement('DIV');
+    modalBody.classList.add('modal-body');
+    var puzzleCanvas = document.createElement('CANVAS');
+    puzzleCanvas.id = 'puzzle_canvas' + i;
+    // puzzleCanvas.style.resize = 'both';
+    modalBody.appendChild(puzzleCanvas);
+    var modalFooter = document.createElement('DIV');
+    modalFooter.classList.add('modal-footer');
+    modalContent.appendChild(modalHeader);
+    modalContent.appendChild(modalBody);
+    modalContent.appendChild(modalFooter);
+    modal.appendChild(modalContent);
+    body.appendChild(modal);
+  }
+}
+
+//function to open modalBtn
+function openModal(modal){
+  modal.style.display = 'block';
+}
+
+function closeModal(modal){
+  modal.style.display = 'none';
+}
+
+
+function displayPuzzleModal(index) {
+  if (index > -1) {
+    var puzzleId = 'puzzle' + index;
+    console.log(puzzleId);
+    var modal = document.getElementById(puzzleId);
+    // openModal(modal);
+  }
 }
 
 init();

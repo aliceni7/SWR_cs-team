@@ -2,23 +2,29 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="puzzle.css">
+    <link rel="stylesheet" type="text/css" href="jigsaw.css">
     <title>Drag and Drop Puzzle Pieces</title>
   </head>
   <body>
-    <div id="myModal" class="modal">
+    <button id="modalBtn" class="button">Click Here</button>
+
+    <div id="simpleModal" class="modal">
       <div class="modal-content">
-        <!-- The Close Button -->
-        <span class="close">&times;</span>
-
-        <p>Hello... I am a modal</p>
-
-        <!-- Modal Content (The Image) -->
-        <img class="modal-content" id="img01">
-
-        <!-- Modal Caption (Image Text) -->
-        <div id="caption"></div>
-
+        <div class="modal-header">
+          <!-- The Close Button -->
+          <span class="closeBtn">&times;</span>
+          <!-- <h2>Modal Header</h2> -->
+        </div>
+        <div class="modal-body">
+          <canvas id="puzzle_canvas" resize></canvas>
+          <!-- <p>Hello... I am a modal</p> -->
+          <!-- Modal Content (The Image) -->
+          <!-- <img alt = "pic" id = "puzzle-image" class = "puzzle-image" src = "./jigsaw_pics/Space.jpg"> -->
+        </div>
+        <div class="modal-footer">
+          <!-- <h3>Modal Footer</h3> -->
+        </div>
+      </div>
     </div>
     <!-- <ul>
       <li><img class="list-item" draggable="true" src="C:\Users\rache\Pictures\Saved Pictures\Toucan.jpg" alt="" id="dragElement"></li>
