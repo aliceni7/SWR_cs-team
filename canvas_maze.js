@@ -66,7 +66,7 @@ form.onsubmit = function () {
   resizeMaze();
 
   //positions avatar at the start cell
-  avatarPosition(startCell[COL] * cellWidth + cellWidth / 2, startCell[ROW] * cellHeight + cellHeight / 2 + 2);
+  avatarPosition(startCell[COL] * cellWidth + cellWidth * 0.6, startCell[ROW] * cellHeight + cellHeight * 0.6);
   return false;
 };
 
@@ -80,7 +80,7 @@ function generateMaze(r = defaultRows, c = defaultCols) {
 
   //console.log(maze);
   //positions avatar at the start cell
-  avatarPosition(startCell[COL] * cellWidth + 45, startCell[ROW] * cellHeight + 50);
+  avatarPosition(startCell[COL] * cellWidth + cellWidth * 0.6, startCell[ROW] * cellHeight + cellHeight * 0.6);
 }
 
 // Creates an empty grid with start and end cells in HTML file and returns the maze
