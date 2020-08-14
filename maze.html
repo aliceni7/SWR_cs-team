@@ -3,22 +3,82 @@
   <head>
     <meta charset="utf-8">
     <title>Canvas Maze</title>
-    <style type="text/css">
-      body {
-        margin: 0px;
-      }
-      #container {
-	  position: relative;
-      }
-      canvas {
-	  position: absolute;
-	  /* #top: 0;
-	  #left: 0; */
-	  border: 1px solid black;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
+    <div id="character-select" class="modal">
+      <center>
+	
+	<div class="div" id="skin">
+	  <span class="dot" id="#ffe0b4" style="background-color:#ffe0b4" onclick='select("#ffe0b4")'></span>
+	  <span class="dot" id="#f8d998" style="background-color:#f8d998" onclick='select("#f8d998")'></span>
+	  <span class="dot" id="#b26644" style="background-color:#b26644" onclick='select("#b26644")'></span>
+	  <span class="dot" id="#935f37" style="background-color:#935f37" onclick='select("#935f37")'></span>
+	  <span class="dot" id="#7f4422" style="background-color:#7f4422" onclick='select("#7f4422")'></span>
+	  <span class="dot" id="#3c200a" style="background-color:#3c200a" onclick='select("#3c200a")'></span>
+	</div>
+	
+	<div class="div" id="avatar-display">
+	  <img class="avatar" id="skin-a" src="images/body/b1.png" />
+	  
+	  <img class="avatar" id="shirt-a" src="images/shirt/s1.png" />
+	  
+	  <img class="avatar" id="pants-a" src="images/pants/p1.png" />
+	  <img class="avatar" id="hair-a" src="images/hair/h1black.png"/>
+	  <img class="avatar" id="hair-shading" src="images/hair/h1 color map.png" />
+	  <img class="avatar" id="eyes-a" src="images/eyes/e1.png" />
+	  <img class="avatar" id="acc-a" src="images/accessories/aa1.png" />
+	</div>
+	
+	<div class="div" id="hair-select">
+	  <img class="arrow" id="hair-back" src="images/arrowleft.png" onclick='switchHair("back")'/>
+	  <img class="hair-pic" id="current-hair" src="images/hair/h1black.png" onclick='selectHair("images/hair/h1black.png")'/>
+	  <img class="arrow" id="hair-forward" src="images/arrowright.png" onclick='switchHair("forward")'/>
+
+	  <span class="hair-color" style="background-color:#291409" onclick='switchColor("black")'></span>
+	  <span class="hair-color" style="background-color:#e25113" onclick='switchColor("ginger")'></span>
+	  <span class="hair-color" style="background-color:#5f3112" onclick='switchColor("brown")'></span>
+	  <span class="hair-color" style="background-color:#fbd603" onclick='switchColor("blond")'></span>
+	  
+	</div>
+	
+	<div class="div" id="clothes-select">
+	  <img class="arrow" id="pants-back" src="images/arrowleft.png" onclick='switchShirt("back")'/>
+	  <img class="shirt-pic" id="current-shirt" src="images/shirt/s1.png" onclick='selectClothes("images/shirt/s1.png")'/>
+	  <img class="arrow" id="pants-forward" src="images/arrowright.png" onclick='switchShirt("forward")'/>
+	  
+	  <img class="arrow" id="pants-back" src="images/arrowleft.png" onclick='switchPants("back")'/>
+	  <img class="pants-pic" id="current-pants" src="images/pants/p1.png" onclick='selectClothes("images/pants/p1.png")'/>
+	  <img class="arrow" id="pants-forward" src="images/arrowright.png" onclick='switchPants("forward")' />
+
+	  <!--
+	  <div class="slidecontainer">
+	    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+	  </div>
+
+	  <div class="slidecontainer">
+	    <input type="range" min="1" max="100" value="50" class="slider" id="pants-slider">
+	  </div>
+	  -->
+
+	</div>
+	
+	<div class="div" id="extra">
+
+	  <img class="arrow" id="eyes-back" src="images/arrowleft.png" onclick='switchEyes("back")'/>
+	  <img class="eyes-pic" id="current-eyes" src="images/eyes/e1.png" onclick='selectEyes("images/eyes/e1.png")' />
+	  <img class="arrow" id="eyes-forward" src="images/arrowright.png" onclick='switchEyes("forward")'/>
+
+	  <img class="arrow" id="acc-back" src="images/arrowleft.png" onclick='switchAcc("back")'/>
+	  <img class="acc-pic" id="current-acc" src="images/accessories/a1.png" onclick='selectAcc("images/accessories/a1.png")' />
+	  <img class="arrow" id="acc-forward" src="images/arrowright.png" onclick='switchAcc("forward")'/>
+	  
+	  
+	</div>
+	<button class="submit" id="submi" type="button" onclick="start(); return false;">Start!</button>
+      </center>
+      
+    </div>
     <section class="maze_dimensions">
       <form class="maze_dimensions" action="maze.html" action="#">
         <label for="maze_rows">Rows</label>
@@ -35,6 +95,7 @@
     <canvas class="canvas" id="canvas1"></canvas>
     <canvas class="canvas" id="canvas2"></canvas>
 
+     
 
     <script src="canvas_maze.js"></script>
   </body>
