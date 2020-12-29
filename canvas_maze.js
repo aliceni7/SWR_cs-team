@@ -46,7 +46,7 @@ function getCursorPosition(canvas, event) {
 function resizeMaze() {
 	let oldWidth = canvas.width;
 	let oldHeight = canvas.height;
-	canvas.width = window.innerWidth / 2;
+	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	cellWidth = canvas.width / (mazeCols + 1);
 	cellHeight = canvas.height / (mazeRows + 1);
