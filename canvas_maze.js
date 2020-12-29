@@ -409,16 +409,31 @@ function unvisitedNeighbors(cell, visited) {
 	window.requestAnimationFrame = requestAnimationFrame;
 })();
 
-window.addEventListener('keydown', function (e) {
-	e.preventDefault();
+document.addEventListener('keydown', function (e) {
+    e.preventDefault();
+    console.log(e.key);
+    console.log(e.keyCode);
+    if (e.key != undefined) {
+	keys[e.key] = true;
+    } else if (e.keyIdentifier != undefined) {
+	keys[e.keyIdentifier] = true;
+    } else if (e.keyCode != undefined) {
 	keys[e.keyCode] = true;
+    }
+    
 }
 );
 
-window.addEventListener('keyup', function (e) {
-	velX = 0;
-	velY = 0;
+document.addEventListener('keyup', function (e) {
+    velX = 0;
+    velY = 0;
+    if (e.key != undefined) {
+	keys[e.key] = false;
+    } else if (e.keyIdentifier != undefined) {
+	keys[e.keyIdentifier] = false;
+    } else if (e.keyCode != undefined) {
 	keys[e.keyCode] = false;
+    }
 });
 
 
@@ -492,7 +507,8 @@ function checkEquality(pix, colorArray = [255, 165, 0, 255]) {
 }
 
 function whatKey() {
-	if (keys[37]) {
+    //console.log(keys);
+	if (keys[37] || keys["ArrowLeft"]) {
 		//velX = -4;  left key
 		const leftSide = [];
 		for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
@@ -507,7 +523,7 @@ function whatKey() {
 		}
 	}
 
-	if (keys[39]) {
+	if (keys[39] || keys["ArrowRight"]) {
 		//velX = 4;  right key
 		const rightSide = [];
 		for (i = wallThickness; i < avatarHeight - wallThickness; i++) {
@@ -523,7 +539,7 @@ function whatKey() {
 		}
 	}
 
-	if (keys[40]) {
+	if (keys[40] || keys["ArrowDown"]) {
 		//velY = 4;  down key
 		const bottomSide = [];
 		for (i = wallThickness; i < avatarWidth - wallThickness; i++) {
@@ -538,7 +554,7 @@ function whatKey() {
 		}
 	}
 
-	if (keys[38]) {
+	if (keys[38] || keys["ArrowUp"]) {
 		//velY = 4;  up key
 		const topSide = [];
 		for (i = wallThickness; i < avatarWidth - wallThickness; i++) {
